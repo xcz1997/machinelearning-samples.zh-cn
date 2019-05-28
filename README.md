@@ -4,7 +4,7 @@
 
 在这个GitHub 存储库中，我们提供了示例，这些示例将帮助您开始使用ML.NET，以及如何将ML.NET加入到现有的和新的.NET应用程序中。
 
-**注意:** 请在[机器学习存储库](https：//github.com/dotnet/machinelearning/issues)中打开与[ML.NET](https://www.microsoft.com/net/learn/apps/machine-learning-and-ai/ml-dotnet)框架相关的问题。请仅当您遇到此存储库中的示例问题时，才在存储库中创建该问题。 
+**注意:** 请在[机器学习存储库](https://github.com/dotnet/machinelearning/issues)中打开与[ML.NET](https://www.microsoft.com/net/learn/apps/machine-learning-and-ai/ml-dotnet)框架相关的问题。请仅当您遇到此存储库中的示例问题时，才在存储库中创建该问题。 
 
 存储库中有两种类型的示例/应用程序：
 
