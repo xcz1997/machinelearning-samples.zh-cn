@@ -22,7 +22,7 @@
 
 所有这些示例的共同特征是我们想要预测的参数只能采用两个值中的一个。 换句话说，该值由 `boolean` 类型表示。
 
-## Solution
+## 解决方案
 要解决这个问题，首先我们将建立一个机器学习模型。然后，我们将在现有数据上训练模型，评估其有多好，最后我们将使用该模型来预测新评论的情绪。 
 
 ![Build -> Train -> Evaluate -> Consume](../shared_content/modelpipeline.png)
