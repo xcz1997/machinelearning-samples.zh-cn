@@ -99,6 +99,6 @@ var resultprediction = predEngine.Predict(sampleStatement);
 
 
 ## 试试看
-此示例与[Try .NET]兼容(https://github.com/dotnet/try)。按照[这些说明](https://github.com/dotnet/try#setup)设置Try .NET，然后将`cd`转到这个目录下并运行`dotnet try`以运行示例。
+此示例与[Try .NET]兼容(https://github.com/dotnet/try) 。按照[这些说明](https://github.com/dotnet/try#setup)设置Try .NET，然后将`cd`转到这个目录下并运行`dotnet try`以运行示例。
 ```cs --source-file ./SentimentAnalysis/SentimentAnalysisConsoleApp/Program.cs --project ./SentimentAnalysis/SentimentAnalysisConsoleApp/SentimentAnalysisConsoleApp.csproj  --region try
 ```
