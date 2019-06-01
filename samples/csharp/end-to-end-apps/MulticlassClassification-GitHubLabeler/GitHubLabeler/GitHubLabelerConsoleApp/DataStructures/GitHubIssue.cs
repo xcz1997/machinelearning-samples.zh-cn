@@ -1,22 +1,23 @@
-﻿using Microsoft.ML.Runtime.Api;
-
+﻿
 #pragma warning disable 649 // We don't care about unsused fields here, because they are mapped with the input file.
+
+using Microsoft.ML.Data;
 
 namespace GitHubLabeler.DataStructures
 {
     //The only purpose of this class is for peek data after transforming it with the pipeline
     internal class GitHubIssue
     {
-        [Column(ordinal: "0")]
+        [LoadColumn(0)]
         public string ID;
 
-        [Column(ordinal: "1")]
+        [LoadColumn(1)]
         public string Area; // This is an issue label, for example "area-System.Threading"
 
-        [Column(ordinal: "2")]
+        [LoadColumn(2)]
         public string Title;
 
-        [Column(ordinal: "3")]
+        [LoadColumn(3)]
         public string Description;
     }
 }

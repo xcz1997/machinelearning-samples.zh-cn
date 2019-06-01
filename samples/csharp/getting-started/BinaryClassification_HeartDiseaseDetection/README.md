@@ -4,7 +4,7 @@
 |----------------|-------------------|-------------------------------|-------------|-----------|---------------------|---------------------------|-----------------------------|
 | v1.0.0           | 动态 API | 最新版 | 控制台应用程序 | .txt 文件 | 心脏病预测 | 二元分类 | FastTree |
 
-在这个介绍性示例中，您将看到如何使用[ML.NET](https://www.microsoft.com/net/./apps/machine-.-and-ai/ml-dotnet)预测心脏病。在机器学习领域中，这种类型的预测被称为**二元分类**。
+在这个介绍性示例中，您将看到如何使用[ML.NET](https://www.microsoft.com/net/learn/apps/machine-learning-and-ai/ml-dotnet)预测心脏病。在机器学习领域中，这种类型的预测被称为**二元分类**。
 
 ## 数据集
 数据集使用的是: [UCI Heart disease] (https://archive.ics.uci.edu/ml/datasets/heart+Disease)
