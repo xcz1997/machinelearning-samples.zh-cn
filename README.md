@@ -13,18 +13,18 @@
 * 终端应用程序 ![](./images/app-type-e2e.png) : 使用ML.NET进行机器学习的Web，桌面，移动和其他应用程序的实际例子
 
 根据场景和机器学习问题/任务，官方ML.NET示例被分成多个类别，可通过下表访问：
- 
+
 <table align="middle" width=100%>  
   <tr>
     <td align="middle" colspan="3">二元分类</td>
   </tr>
   <tr>
-    <td align="middle"><img src="images/sentiment-analysis.png" alt="二元分类 图表"><br><br><b>情绪分析 <br><a href="samples/csharp/getting-started/BinaryClassification_SentimentAnalysis">C#</a> &nbsp; &nbsp; <a href="samples/fsharp/getting-started/BinaryClassification_SentimentAnalysis">F#</a>&nbsp;&nbsp;&nbsp;<img src="images/app-type-getting-started.png" alt="入门图标"></b></td>
-    <td align="middle"><img src="images/spam-detection.png" alt="Movie Recommender chart"><br><br><b>垃圾信息检测<br><a href="samples/csharp/getting-started/BinaryClassification_SpamDetection">C#</a> &nbsp; &nbsp; <a href="samples/fsharp/getting-started/BinaryClassification_SpamDetection">F#</a>&nbsp;&nbsp;&nbsp;<img src="images/app-type-getting-started.png" alt="入门图标"></b></td>
-    <td align="middle"><img src="images/fraud-detection.png" alt="Movie Recommender chart"><br><br><b>欺诈识别<br><a href="samples/csharp/getting-started/BinaryClassification_CreditCardFraudDetection">C#</a> &nbsp;&nbsp;&nbsp;<a href="samples/fsharp/getting-started/BinaryClassification_CreditCardFraudDetection">F#</a> &nbsp;&nbsp;&nbsp;<img src="images/app-type-getting-started.png" alt="入门图标"></b></td>
+    <td align="middle"><img src="images/sentiment-analysis.png" alt="Binary classification chart"><br><img src="images/app-type-getting-started-term-cursor.png" alt="Getting started icon"><br><b>情绪分析<br><a href="samples/csharp/getting-started/BinaryClassification_SentimentAnalysis">C#</a> &nbsp; &nbsp; <a href="samples/fsharp/getting-started/BinaryClassification_SentimentAnalysis">F#</a></b></td>
+    <td align="middle"><img src="images/spam-detection.png" alt="Movie Recommender chart"><br><img src="images/app-type-getting-started-term-cursor.png" alt="Getting started icon"><br><b>垃圾信息检测<br><a href="samples/csharp/getting-started/BinaryClassification_SpamDetection">C#</a> &nbsp; &nbsp; <a href="samples/fsharp/getting-started/BinaryClassification_SpamDetection">F#</a></b></td>
+    <td align="middle"><img src="images/anomaly-detection.png" alt="Power Anomaly detection chart"><br><img src="images/app-type-getting-started-term-cursor.png" alt="Getting started icon"><br><b>信用卡欺诈识别<br>(Binary Classification)<br><a href="samples/csharp/getting-started/BinaryClassification_CreditCardFraudDetection">C#</a> &nbsp;&nbsp;&nbsp;<a href="samples/fsharp/getting-started/BinaryClassification_CreditCardFraudDetection">F#</a></b></td>
   </tr> 
   <tr>
-    <td align="middle"><img src="images/disease-detection.png" alt="disease detection chart"><br><br><b>心脏病预测 <br><a href="samples/csharp/getting-started/BinaryClassification_HeartDiseaseDetection">C#</a>&nbsp;&nbsp;&nbsp;<img src="images/app-type-getting-started.png" alt="入门图标"></td>
+    <td align="middle"><img src="images/disease-detection.png" alt="disease detection chart"><br><img src="images/app-type-getting-started-term-cursor.png" alt="Getting started icon"><br><b>心脏病预测<br><a href="samples/csharp/getting-started/BinaryClassification_HeartDiseaseDetection">C#</a></td>
     <td></td>
     <td></td>
   </tr> 
@@ -32,52 +32,69 @@
     <td align="middle" colspan="3">多类分类</td>
   </tr>
   <tr>
-    <td align="middle"><img src="images/issue-labeler.png" alt="ssue Labeler chart"><br><br><b>问题分类  <br> <a href="samples/csharp/end-to-end-apps/MulticlassClassification-GitHubLabeler">C#</a> &nbsp;&nbsp;&nbsp;<a href="samples/fsharp/end-to-end-apps/MulticlassClassification-GitHubLabeler">F#</a> &nbsp;&nbsp;&nbsp;<img src="images/app-type-e2e.png" alt="End-to-end app icon"></b></td>
-    <td align="middle"><img src="images/flower-classification.png" alt="Movie Recommender chart"><br><br><b>鸢尾花分类 <br><a href="samples/csharp/getting-started/MulticlassClassification_Iris">C#</a> &nbsp; &nbsp;<a href="samples/fsharp/getting-started/MulticlassClassification_Iris">F#</a> &nbsp;&nbsp;&nbsp;<img src="images/app-type-getting-started.png" alt="入门图标"></b></td>
-    <td align="middle"><img src="images/handwriting-classification.png" alt="Movie Recommender chart"><br><br><b>手写数字识别<br><a href="samples/csharp/getting-started/MulticlassClassification_MNIST">C#</a> &nbsp; &nbsp;&nbsp;<img src="images/app-type-getting-started.png" alt="入门图标"></b></td>
+    <td align="middle"><img src="images/issue-labeler.png" alt="Issue Labeler chart"><br><img src="images/app-type-e2e-black.png" alt="End-to-end app icon"><br><b>GitHub Issues 分类<br> <a href="samples/csharp/end-to-end-apps/MulticlassClassification-GitHubLabeler">C#</a>&nbsp;&nbsp;<a href="samples/fsharp/end-to-end-apps/MulticlassClassification-GitHubLabeler">F#</a></b></td>
+    <td align="middle"><img src="images/flower-classification.png" alt="Movie Recommender chart"><br><img src="images/app-type-getting-started-term-cursor.png" alt="Getting started icon"><br><b>鸢尾花分类<br><a href="samples/csharp/getting-started/MulticlassClassification_Iris">C#</a> &nbsp; &nbsp;<a href="samples/fsharp/getting-started/MulticlassClassification_Iris">F#</a></b></td>
+    <td align="middle"><img src="images/handwriting-classification.png" alt="Movie Recommender chart"><br><img src="images/app-type-getting-started-term-cursor.png" alt="Getting started icon"><br><b>手写数字识别<br><a href="samples/csharp/getting-started/MulticlassClassification_MNIST">C#</a></b></td>
   </tr>
   <tr>
     <td align="middle" colspan="3">建议</td>
   </tr>
   <tr>
-    <td align="middle"><img src="images/product-recommendation.png" alt="Product Recommender chart"><br><br><b>产品推荐<br><a href="samples/csharp/getting-started/MatrixFactorization_ProductRecommendation">C#</a><img src="images/app-type-getting-started.png" alt="入门图标"></h4></td>
-    <td align="middle"><img src="images/movie-recommendation.png" alt="Movie Recommender chart" ><br><br><b>电影推荐<b><br><a href="samples/csharp/getting-started/MatrixFactorization_MovieRecommendation">C#</a> &nbsp;&nbsp;&nbsp;<img src="images/app-type-getting-started.png" alt="入门图标"></b></td>
-    <td align="middle"><img src="images/movie-recommendation.png" alt="Movie Recommender chart"><br><br><b>电影推荐 (E2E app)<br><a href="samples/csharp/end-to-end-apps/Recommendation-MovieRecommender">C#</a> &nbsp;&nbsp;&nbsp;<img src="images/app-type-e2e.png" alt="End-to-end app icon"></b></td>
+    <td align="middle"><img src="images/product-recommendation.png" alt="Product Recommender chart"><br><img src="images/app-type-getting-started-term-cursor.png" alt="Getting started icon"><br><b>产品推荐<br><a href="samples/csharp/getting-started/MatrixFactorization_ProductRecommendation">C#</a></h4></td>
+    <td align="middle"><img src="images/movie-recommendation.png" alt="Movie Recommender chart" ><br><img src="images/app-type-getting-started-term-cursor.png" alt="Getting started icon"><br><b>电影推荐<br>(Matrix Factorization)<b><br><a href="samples/csharp/getting-started/MatrixFactorization_MovieRecommendation">C#</a></b></td>
+    <td align="middle"><img src="images/movie-recommendation.png" alt="Movie Recommender chart"><br><img src="images/app-type-e2e-black.png" alt="End-to-end app icon"><br><b>电影推荐<br>(Field Aware Factorization Machines)<br><a href="samples/csharp/end-to-end-apps/Recommendation-MovieRecommender">C#</a></b></td>
   </tr>
   <tr>
-    <td align="middle" colspan="3">回归测试</td>
+    <td align="middle" colspan="3">回归</td>
   </tr>
   <tr>
-    <td align="middle"><img src="images/price-prediction.png" alt="Price Prediction chart"><br><br><b>价格预测<br><a href="samples/csharp/getting-started/Regression_TaxiFarePrediction">C#</a> &nbsp; &nbsp; <a href="samples/fsharp/getting-started/Regression_TaxiFarePrediction">F#</a>&nbsp;&nbsp;&nbsp;<img src="images/app-type-getting-started.png" alt="入门图标"></b></td>
-    <td align="middle"><br><img src="images/sales-forcasting.png" alt="Sales ForeCasting chart"><br><br><b>销售预测<br><a href="samples/csharp/end-to-end-apps/Regression-SalesForecast">C#</a>  &nbsp;&nbsp;&nbsp;<img src="images/app-type-e2e.png" alt="End-to-end app icon"><br><br></b></td>
-    <td align="middle"><img src="images/demand-prediction.png" alt="Demand Prediction chart"><br><br><b>需求预测<br><a href="samples/csharp/getting-started/Regression_BikeSharingDemand">C#</a> &nbsp;&nbsp;&nbsp;<a href="samples/fsharp/getting-started/Regression_BikeSharingDemand">F#</a> &nbsp;&nbsp;&nbsp;<img src="images/app-type-getting-started.png" alt="入门图标"></b></td>
+    <td align="middle"><img src="images/price-prediction.png" alt="Price Prediction chart"><br><img src="images/app-type-getting-started-term-cursor.png" alt="Getting started icon"><br><b>价格预测<br><a href="samples/csharp/getting-started/Regression_TaxiFarePrediction">C#</a> &nbsp; &nbsp; <a href="samples/fsharp/getting-started/Regression_TaxiFarePrediction">F#</a></b></td>
+    <td align="middle"><br><img src="images/sales-forcasting.png" alt="Sales ForeCasting chart"><br><img src="images/app-type-e2e-black.png" alt="End-to-end app icon"><br><b>销售预测<br><a href="samples/csharp/end-to-end-apps/Forecasting-Sales">C#</a><br><br></b></td>
+    <td align="middle"><img src="images/demand-prediction.png" alt="Demand Prediction chart"><br><img src="images/app-type-getting-started-term-cursor.png" alt="Getting started icon"><br><b>需求预测<br><a href="samples/csharp/getting-started/Regression_BikeSharingDemand">C#</a> &nbsp;&nbsp;&nbsp;<a href="samples/fsharp/getting-started/Regression_BikeSharingDemand">F#</a></b></td>
   </tr>
   <tr>
-    <td align="middle" colspan="3">聚类分析</td>
+    <td align="middle" colspan="3">时间序列预测</td>
   </tr>
   <tr>
-    <td align="middle"><img src="images/customer-segmentation.png" alt="Customer Segmentation chart"><br><br><b>客户细分<br><a href="samples/csharp/getting-started/Clustering_CustomerSegmentation">C#</a> &nbsp; &nbsp; <a href="samples/fsharp/getting-started/Clustering_CustomerSegmentation">F#</a>&nbsp;&nbsp;&nbsp;<img src="images/app-type-getting-started.png" alt="入门图标"></b></td>
-    <td align="middle"><img src="images/clustering.png" alt="IRIS Flowers chart"><br><br><b>鸢尾花聚类<br><a href="samples/csharp/getting-started/Clustering_Iris">C#</a> &nbsp; &nbsp; <a href="samples/fsharp/getting-started/Clustering_Iris">F#</a>&nbsp;&nbsp;&nbsp;<img src="images/app-type-getting-started.png" alt="入门图标"></b></td>
+    <td align="middle"><br><img src="images/sales-forcasting.png" alt="Sales ForeCasting chart"><br><img src="images/app-type-e2e-black.png" alt="End-to-end app icon"><br><b>销售预测<<br><a href="samples/csharp/end-to-end-apps/Forecasting-Sales">C#</a><br><br></b></td>
+    <td></td>
     <td></td>
   </tr>
   <tr>
     <td align="middle" colspan="3">异常情况检测</td>
   </tr>
   <tr>
-    <td align="middle"><img src="images/spike-detection.png" alt="spike detection chart"><br><br><b>销售高峰检测<br><a href="samples/csharp/getting-started/AnomalyDetection_Sales">C#</a> &nbsp; &nbsp; <img src="images/app-type-getting-started.png" alt="入门图标"> &nbsp;
-      <a href="samples/csharp/end-to-end-apps/AnomalyDetection-Sales">C#</a> &nbsp;&nbsp;&nbsp;<img src="images/app-type-e2e.png" alt="End-to-end app icon"><b></td>
-    <td align="middle"><img src="images/anomaly-detection.png" alt="Power Anomaly detection chart"><br><br><b>电力异常检测<br><a href="samples/csharp/getting-started/AnomalyDetection_PowerMeterReadings">C#</a> &nbsp; &nbsp; <img src="images/app-type-getting-started.png" alt="入门图标"><b></td>
-     <td></td>
+    <td align="middle"><img src="images/spike-detection.png" alt="Spike detection chart"><br><br><b>销售高峰检测<br><img src="images/app-type-getting-started-term-cursor.png" alt="Getting started icon">&nbsp;<a href="samples/csharp/getting-started/AnomalyDetection_Sales">C#</a>&nbsp&nbsp;&nbsp;&nbsp;&nbsp;
+      <img src="images/app-type-e2e-black.png" alt="End-to-end app icon">&nbsp;<a href="samples/csharp/end-to-end-apps/AnomalyDetection-Sales">C#</a><b></td>
+    <td align="middle"><img src="images/spike-detection.png" alt="Spike detection chart"><br><img src="images/app-type-getting-started-term-cursor.png" alt="Getting started icon"><br><b>电力异常检测<br><a href="samples/csharp/getting-started/AnomalyDetection_PowerMeterReadings">C#</a><b></td>
+      <td align="middle"><img src="images/anomaly-detection.png" alt="Power Anomaly detection chart"><br><img src="images/app-type-getting-started-term-cursor.png" alt="Getting started icon"><br><b>信用卡欺诈检测<br>(Anomaly Detection)<br><a href="samples/csharp/getting-started/AnomalyDetection_CreditCardFraudDetection">C#</a><b></td>
   </tr> 
+  <tr>
+    <td align="middle" colspan="3">聚类分析</td>
+  </tr>
+  <tr>
+    <td align="middle"><img src="images/customer-segmentation.png" alt="Customer Segmentation chart"><br><img src="images/app-type-getting-started-term-cursor.png" alt="Getting started icon"><br><b>客户细分<br><a href="samples/csharp/getting-started/Clustering_CustomerSegmentation">C#</a> &nbsp; &nbsp; <a href="samples/fsharp/getting-started/Clustering_CustomerSegmentation">F#</a></b></td>
+    <td align="middle"><img src="images/clustering.png" alt="IRIS Flowers chart"><br><img src="images/app-type-getting-started-term-cursor.png" alt="Getting started icon"><br><b>鸢尾花聚类<<br><a href="samples/csharp/getting-started/Clustering_Iris">C#</a> &nbsp; &nbsp; <a href="samples/fsharp/getting-started/Clustering_Iris">F#</a></b></td>
+    <td></td>
+  </tr>
+  <tr>
+    <td align="middle" colspan="3">排名</td>
+  </tr>
+  <tr>
+    <td align="middle"><img src="images/ranking-numbered.png" alt="Ranking chart"><br><img src="images/app-type-getting-started-term-cursor.png" alt="Getting started icon"><br><b>排名搜索引擎结果<br><a href="samples/csharp/getting-started/Ranking_Web">C#</a><b></td>
+      <td></td>
+      <td></td>
+  </tr>
   <tr>
     <td align="middle" colspan="3">计算机视觉</td>
   </tr>
   <tr>
-    <td align="middle"><img src="images/image-classification.png" alt="Image Classification chart"><br><br><b>图像分类<br>    (TensorFlow 模型评分)<br><a href="samples/csharp/getting-started/DeepLearning_ImageClassification_TensorFlow">C#</a> &nbsp; &nbsp; <a href="samples/fsharp/getting-started/DeepLearning_ImageClassification_TensorFlow">F#</a> &nbsp;&nbsp;&nbsp;<img src="images/app-type-getting-started.png" alt="入门图标"><b></td>
-    <td align="middle"><img src="images/image-classification.png" alt="Image Classification chart"><br><br><b>图像分类<br>    (TensorFlow 估算器)<br><a href="samples/csharp/getting-started/DeepLearning_TensorFlowEstimator">C#</a> &nbsp; &nbsp; <a href="samples/fsharp/getting-started/DeepLearning_TensorFlowEstimator">F#</a> &nbsp;&nbsp;&nbsp;<img src="images/app-type-getting-started.png" alt="入门图标"><b></td>
+    <td align="middle"><img src="images/image-classification.png" alt="Image Classification chart"><br><br><b>图像分类<br>    (TensorFlow 模型评分)<br><img src="images/app-type-getting-started-term-cursor.png" alt="Getting started icon">&nbsp;<a href="samples/csharp/getting-started/DeepLearning_ImageClassification_TensorFlow">C#</a> &nbsp; <a href="samples/fsharp/getting-started/DeepLearning_ImageClassification_TensorFlow">F#</a>&nbsp;&nbsp&nbsp&nbsp&nbsp;&nbsp;
+      <img src="images/app-type-e2e-black.png" alt="End-to-end app icon">&nbsp;<a href="samples/csharp/end-to-end-apps/DeepLearning_ImageClassification_TensorFlow">C#</a><b></td><b></td>
+    <td align="middle"><img src="images/image-classification.png" alt="Image Classification chart"><br><img src="images/app-type-getting-started-term-cursor.png" alt="Getting started icon"><br><b>图像分类<br>    (TensorFlow 估算器)<br><a href="samples/csharp/getting-started/DeepLearning_TensorFlowEstimator">C#</a> &nbsp; &nbsp; <a href="samples/fsharp/getting-started/DeepLearning_TensorFlowEstimator">F#</a><b></td>
     <td align="middle"><img src="images/object-detection.png" alt="Object Detection chart"><br><br><b>目标检测<br>    (ONNX 模型评分)<br>
-    <a href="samples/csharp/getting-started\DeepLearning_ObjectDetection_Onnx">C#</a> &nbsp; &nbsp;<img src="images/app-type-getting-started.png" alt="入门图标">
-    <a href="samples/csharp/end-to-end-apps/DeepLearning_ObjectDetection_Onnx">C#</a> &nbsp;&nbsp;&nbsp;<img src="images/app-type-e2e.png" alt="End-to-end app icon"><b></td>
+    <img src="images/app-type-getting-started-term-cursor.png" alt="Getting started icon">&nbsp;<a href="samples/csharp/getting-started\DeepLearning_ObjectDetection_Onnx">C#</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <img src="images/app-type-e2e-black.png" alt="End-to-end app icon">&nbsp;<a href="/samples/csharp/end-to-end-apps/ObjectDetection-Onnx">C#</a><b></td>
   </tr> 
 </table>
 
@@ -87,13 +104,20 @@
 
 <table >
   <tr>
-    <td align="middle" colspan="3">交叉情景</td>
+    <td align="middle" colspan="3">横切情景</td>
   </tr>
   <tr>
-  <td align="middle"><img src="images/web.png" alt="web image" ><br><b>Web API上的可扩展模型<br><a href="samples/csharp/end-to-end-apps/ScalableMLModelOnWebAPI-IntegrationPkg">C#</a> &nbsp; &nbsp; <img src="images/app-type-e2e.png" alt="End-to-end app icon"><b></td>
-  
-  <td align="middle"><img src="images/database.png" alt="Database chart"><br><b>数据库训练模型<br><a href="samples/csharp/getting-started/DatabaseIntegration">C#</a> &nbsp; &nbsp; <img src="images/app-type-getting-started.png" alt="入门图标"><b></td>
-  <td align="middle"><img src="images/smile.png" alt="Database chart"><br><b>可扩展的Blazor Web应用程序<br><a href="samples/csharp/end-to-end-apps/ScalableSentimentAnalysisBlazorWebApp">C#</a> &nbsp; &nbsp; <img src="images/app-type-e2e.png" alt="End-to-end app icon"><b></td>
+  <td align="middle"><img src="images/web.png" alt="web image" ><br><img src="images/app-type-e2e-black.png" alt="End-to-end app icon"><br><b>Web API上的可扩展模型<br><a href="samples/csharp/end-to-end-apps/ScalableMLModelOnWebAPI-IntegrationPkg">C#</a><b></td>
+  <td align="middle"><img src="images/web.png" alt="web image" ><br><img src="images/app-type-e2e-black.png" alt="End-to-end app icon"><br><b>Razor Web应用程序上的可扩展模型<br><a href="samples/modelbuilder/BinaryClassification_Sentiment_Razor">C#</a><b></td>
+  <td align="middle"><img src="images/azure-functions-20.png" alt="Azure functions logo"><br><img src="images/app-type-e2e-black.png" alt="End-to-end app icon"><br><b>Azure Functions上的可扩展模型<br><a href="samples/csharp/end-to-end-apps/ScalableMLModelOnAzureFunction">C#</a><b></td>
+</tr>
+<tr>
+  <td align="middle"><img src="images/smile.png" alt="Database chart"><br><img src="images/app-type-e2e-black.png" alt="End-to-end app icon"><br><b>Blazor Web应用程序上的可扩展模型<br><a href="samples/csharp/end-to-end-apps/ScalableSentimentAnalysisBlazorWebApp">C#</a><b></td>
+  <td align="middle"><img src="images/large-data-set.png" alt="large file chart"><br><img src="images/app-type-getting-started-term-cursor.png" alt="Getting started icon"><br><b>大数据集<br><a href="samples/csharp/getting-started/LargeDatasets">C#</a><b></td>
+  <td align="middle"><img src="images/database.png" alt="Database chart"><br><img src="images/app-type-getting-started-term-cursor.png" alt="Getting started icon"><br><b>使用数据库训练模型<br><a href="samples/csharp/getting-started/DatabaseIntegration">C#</a><b></td>
+  </tr>
+  <tr>
+  <td align="middle"><img src="images/model-explain-smaller.png" alt="Model explainability chart"><br><img src="images/app-type-e2e-black.png" alt="End-to-end app icon"><br><b>模型可解释性<br><a href="samples/csharp/end-to-end-apps/Model-Explainability">C#</a></b></td>
   </tr>
 </table>
 
@@ -129,7 +153,7 @@ ML.NET AutoML API基本上是一组打包为NuGet包的库，您可以在.NET代
 
 
 -------------------------------------------------------
-## 其他ML.NET社区示例
+# 其他ML.NET社区示例
 
 除了微软提供的ML.NET示例之外，我们还列出了社区创建的示例，这些示例位于单独的页面中：
 [ML.NET 社区示例](https://github.com/dotnet/machinelearning-samples/blob/master/docs/COMMUNITY-SAMPLES.md)
@@ -137,24 +161,24 @@ ML.NET AutoML API基本上是一组打包为NuGet包的库，您可以在.NET代
 这些社区示例不是由微软维护，而是由其所有者维护。
 如果您已经创建了任何很酷的ML.NET示例，请将其信息添加到此[REQUEST issue](https://github.com/dotnet/machinelearning-samples/issues/86) ，我们最终将在上面提到的页面发布其信息。
 
-## 了解更多
+# 了解更多
 
 教程，机器学习基础知识等详细信息，请参阅[ML.NET指南](https://docs.microsoft.com/en-us/dotnet/machine-learning/) 。
 
-## API参考
+# API参考
 
 请查看[ML.NET API参考](https://docs.microsoft.com/dotnet/api/?view=ml-dotnet)，了解各种可用的 API。
 
-## 贡献
+# 贡献
 
 我们欢迎贡献！ 请查看我们的[贡献指南](CONTRIBUTING.md)。
 
-## 社区
+# 社区
 
 请加入我们的Gitter社区 [![Join the chat at https://gitter.im/dotnet/mlnet](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/dotnet/mlnet?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 这个项目采用了[贡献者契约](http://contributor-covenant.org/)规定的行为准则，以表明我们社区的预期行为。有关更多信息，请参见[.NET基金会行为准则](https://dotnetfoundation.org/code-of-conduct)。
 
-## 许可证
+# 许可证
 
 [ML.NET 示例](https://github.com/dotnet/machinelearning-samples)根据[MIT许可证](https://github.com/dotnet/machinelearning-samples/blob/master/LICENSE)获得许可。
