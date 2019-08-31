@@ -2,7 +2,7 @@
 
 | ML.NET 版本 | API 类型          | 状态                        | 应用程序类型    | 数据类型 | 场景            | 机器学习任务                   | 算法                  |
 |----------------|-------------------|-------------------------------|-------------|-----------|---------------------|---------------------------|-----------------------------|
-| v0.7           | 动态API | 可能需要更新项目结构以匹配模板 | 控制台应用程序 | .tsv 文件 | 垃圾信息检测 | 二元分类 | SDCA（线性学习器），还展示了CustomMapping评估器，它可以将自定义代码添加到ML.NET管道 |
+| v1.3.1           | 动态API | 可能需要更新项目结构以匹配模板 | 控制台应用程序 | .tsv 文件 | 垃圾信息检测 | 二元分类 | Averaged Perceptron（线性学习器）|
 
 在这个示例中，您将看到如何使用[ML.NET](https://www.microsoft.com/net/learn/apps/machine-learning-and-ai/ml-dotnet)来预测短信是否是垃圾信息。在机器学习领域中，这种类型的预测被称为**二元分类**。 
 
@@ -34,26 +34,26 @@
 
 ```CSharp
 // Set up the MLContext, which is a catalog of components in ML.NET.
-var mlContext = new MLContext();
+MLContext mlContext = new MLContext();
 
-// Create the reader and define which columns from the file should be read.
-var reader = new TextLoader(mlContext, new TextLoader.Arguments()
-{
-    Separator = "tab",
-    HasHeader = true,
-    Column = new[]
-        {
-            new TextLoader.Column("Label", DataKind.Text, 0),
-            new TextLoader.Column("Message", DataKind.Text, 1)
-        }
-});
+// Specify the schema for spam data and read it into DataView.
+var data = mlContext.Data.LoadFromTextFile<SpamInput>(path: TrainDataPath, hasHeader: true, separatorChar: '\t');
 
-var data = reader.Read(new MultiFileSource(TrainDataPath));
+// Data process configuration with pipeline data transformations 
+var dataProcessPipeline = mlContext.Transforms.Conversion.MapValueToKey("Label", "Label")
+                                      .Append(mlContext.Transforms.Text.FeaturizeText("FeaturesText", new Microsoft.ML.Transforms.Text.TextFeaturizingEstimator.Options
+                                      {
+                                          WordFeatureExtractor = new Microsoft.ML.Transforms.Text.WordBagEstimator.Options { NgramLength = 2, UseAllLengths = true },
+                                          CharFeatureExtractor = new Microsoft.ML.Transforms.Text.WordBagEstimator.Options { NgramLength = 3, UseAllLengths = false },
+                                      }, "Message"))
+                                      .Append(mlContext.Transforms.CopyColumns("Features", "FeaturesText"))
+                                      .Append(mlContext.Transforms.NormalizeLpNorm("Features", "Features"))
+                                      .AppendCacheCheckpoint(mlContext);
 
-// Create the estimator which converts the text label to boolean, featurizes the text, and adds a linear trainer.
-var estimator = mlContext.Transforms.CustomMapping<MyInput, MyOutput>(MyLambda.MyAction, "MyLambda")
-    .Append(mlContext.Transforms.Text.FeaturizeText("Message", "Features"))
-    .Append(mlContext.BinaryClassification.Trainers.StochasticDualCoordinateAscent());
+// Set the training algorithm 
+var trainer = mlContext.MulticlassClassification.Trainers.OneVersusAll(mlContext.BinaryClassification.Trainers.AveragedPerceptron(labelColumnName: "Label", numberOfIterations: 10, featureColumnName: "Features"), labelColumnName: "Label")
+                                      .Append(mlContext.Transforms.Conversion.MapKeyToValue("PredictedLabel", "PredictedLabel"));
+var trainingPipeLine = dataProcessPipeline.Append(trainer);
 ```
 
 ### 2. 评估模型
@@ -61,9 +61,7 @@ var estimator = mlContext.Transforms.CustomMapping<MyInput, MyOutput>(MyLambda.M
 对于这个数据集，我们将使用[交叉验证](https://en.wikipedia.org/wiki/Cross-validation_(statistics))来评估我们的模型。将数据集划分成5个不相交的子集，训练5个模型（每个模型使用其中4个子集），并在训练中没有使用的数据子集上测试模型。
 
 ```CSharp
-var cvResults = mlContext.BinaryClassification.CrossValidate(data, estimator, numFolds: 5);
-var aucs = cvResults.Select(r => r.metrics.Auc);
-Console.WriteLine("The AUC is {0}", aucs.Average());
+var crossValidationResults = mlContext.MulticlassClassification.CrossValidate(data: data, estimator: trainingPipeLine, numberOfFolds: 5);
 ```
 
 请注意，通常我们在训练后评估模型。 但是，交叉验证包括模型训练部分，因此我们不需要先执行`Fit()`。 但是，我们稍后将在完整数据集上训练模型以利用其他数据。
@@ -72,7 +70,7 @@ Console.WriteLine("The AUC is {0}", aucs.Average());
 为了训练模型，我们将调用评估器的`Fit()`方法，同时提供完整的训练数据。
 
 ```CSharp
-var model = estimator.Fit(data);
+var model = trainingPipeLine.Fit(data);
 ```
 
 ### 4. 使用模型
@@ -80,21 +78,10 @@ var model = estimator.Fit(data);
 训练完模型后，您可以使用`Predict()`API来预测新文本是否垃圾信息。 在这种情况下，我们更改模型的阈值以获得更好的预测。 我们这样做是因为我们的数据有偏差，大多数消息都不是垃圾信息。
 
 ```CSharp
-// The dataset we have is skewed, as there are many more non-spam messages than spam messages.
-// While our model is relatively good at detecting the difference, this skewness leads it to always
-// say the message is not spam. We deal with this by lowering the threshold of the predictor. In reality,
-// it is useful to look at the precision-recall curve to identify the best possible threshold.
-var inPipe = new TransformerChain<ITransformer>(model.Take(model.Count() - 1).ToArray());
-var lastTransformer = new BinaryPredictionTransformer<IPredictorProducing<float>>(mlContext, model.LastTransformer.Model, inPipe.GetOutputSchema(data.Schema), model.LastTransformer.FeatureColumn, threshold: 0.15f, thresholdColumn: DefaultColumnNames.Probability);
-
-ITransformer[] parts = model.ToArray();
-parts[parts.Length - 1] = lastTransformer;
-var newModel = new TransformerChain<ITransformer>(parts);
-
-// Create a PredictionFunction from our model 
-var predictor = newModel.MakePredictionFunction<SpamInput, SpamPrediction>(mlContext);
+//Create a PredictionFunction from our model 
+var predictor = mlContext.Model.CreatePredictionEngine<SpamInput, SpamPrediction>(model);
 
 var input = new SpamInput { Message = "free medicine winner! congratulations" };
-Console.WriteLine("The message '{0}' is {1}", input.Message, predictor.Predict(input).isSpam ? "spam" : "not spam");
+Console.WriteLine("The message '{0}' is {1}", input.Message, prediction.isSpam == "spam" ? "spam" : "not spam");
 
 ```
