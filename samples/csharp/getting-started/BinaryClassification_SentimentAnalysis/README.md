@@ -2,7 +2,7 @@
 
 | ML.NET 版本 | API 类型          | 状态                        | 应用程序类型    | 数据类型 | 场景            | 机器学习任务                   | 算法                  |
 |----------------|-------------------|-------------------------------|-------------|-----------|---------------------|---------------------------|-----------------------------|
-| v1.0.0          | 动态API | 最新 |  控制台应用程序 | .tsv 文件 | 情绪分析 | 二元分类 | 线性分类 |
+| v1.3.1          | 动态API | 最新 |  控制台应用程序 | .tsv 文件 | 情绪分析 | 二元分类 | 线性分类 |
 
 在这个介绍性示例中，您将看到如何使用[ML.NET](https://www.microsoft.com/net/./apps/machine-.-and-ai/ml-dotnet)预测客户评论的情绪（积极或消极）。在机器学习领域中，这种类型的预测被称为**二元分类**。
 
@@ -18,7 +18,7 @@
 
 * 预测保险索赔是否有效。
 * 预测飞机是否会延误或将准时到达。
-* 预测face ID（照片）是否属于设备的所有者。 
+* 预测face ID（照片）是否属于设备的所有者。
 
 所有这些示例的共同特征是我们想要预测的参数只能采用两个值中的一个。 换句话说，该值由 `boolean` 类型表示。
 
@@ -71,7 +71,7 @@ ITransformer trainedModel = trainingPipeline.Fit(trainingData);
 
 我们需要这一步骤来判定我们的模型对新数据的准确性。 为此，上一步中的模型再次针对测试数据集运行。 此数据集也包含了已知的情绪。
 
-`Evaluate()`将测试数据集与预测值进行比较，并生成各种指标，例如准确性，您可以对其进行探究。 
+`Evaluate()`将测试数据集与预测值进行比较，并生成各种指标，例如准确性，您可以对其进行探究。
 
 ```cs --source-file ./SentimentAnalysis/SentimentAnalysisConsoleApp/Program.cs --project ./SentimentAnalysis/SentimentAnalysisConsoleApp/SentimentAnalysisConsoleApp.csproj --editable false  --region step5
 // STEP 5: Evaluate the model and show accuracy stats
@@ -98,7 +98,9 @@ var resultprediction = predEngine.Predict(sampleStatement);
 其中`resultprediction.PredictionLabel`将为True或False，具体取决于它是否被预测为负面或正面的情绪。
 
 
-## 试试看
-此示例与[Try .NET]兼容(https://github.com/dotnet/try) 。按照[这些说明](https://github.com/dotnet/try#setup)设置Try .NET，然后将`cd`转到这个目录下并运行`dotnet try`以运行示例。
-```cs --source-file ./SentimentAnalysis/SentimentAnalysisConsoleApp/Program.cs --project ./SentimentAnalysis/SentimentAnalysisConsoleApp/SentimentAnalysisConsoleApp.csproj  --region try
-```
+## 在“TRY .NET”上尝试
+
+此示例与[Try .NET](https://github.com/dotnet/try)兼容。 唯一的区别主要是代码中的多个#regions， 以便支持“Try .NET”。 您可以在此处获取代码并进行尝试:
+
+https://github.com/CESARDELATORRE/MLNET-WITH-TRYDOTNET-SAMPLE/blob/master/README.md
+
