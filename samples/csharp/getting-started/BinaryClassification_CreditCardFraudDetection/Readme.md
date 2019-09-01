@@ -1,13 +1,10 @@
-# 基于二元分类和现有PCA变换数据集的信用卡欺诈识别
+# 信用卡欺诈识别（二元分类）
 
 | ML.NET 版本 | API 类型          | 状态                        | 应用程序类型    | 数据类型 | 场景            | 机器学习任务                   | 算法                  |
 |----------------|-------------------|-------------------------------|-------------|-----------|---------------------|---------------------------|-----------------------------|
-| v1.0.0           | 动态 API | 最新版 | 两个控制台应用程序 | .csv 文件 | 欺诈识别 | 二元分类 | FastTree 二元分类 |
+| v1.3.1           | 动态 API | 最新版 | 两个控制台应用程序 | .csv 文件 | 欺诈识别 | 二元分类 | FastTree 二元分类 |
 
 在这个介绍性示例中，您将看到如何使用ML.NET来预测信用卡欺诈。在机器学习领域中，这种类型的预测被称为二元分类。
-
-## API版本：基于动态和估算器的API
-请务必注意，此示例使用动态API和估算器。
 
 ## 问题
 这个问题的核心是预测信用卡交易（及其相关信息/变量）是否是欺诈。
@@ -32,10 +29,17 @@
 
 有关相关主题的当前和过去项目的更多详细信息，请访问 http://mlg.ulb.ac.be/BruFence 和 http://mlg.ulb.ac.be/ARTML
 
+## ML Task - [Binary Classification](https://en.wikipedia.org/wiki/Binary_classification)
+
+Binary or binomial classification is the task of classifying the elements of a given set into two groups (predicting which group each one belongs to) on the basis of a classification rule. Contexts requiring a decision as to whether or not an item has some qualitative property, some specified characteristic.
+
+If you would like to learn how to detect fraud using anomaly detection, visit the [Anomaly Detection Credit Card Fraud Detection sample](../AnomalyDetection_CreditCardFraudDetection).
 ## 机器学习任务 - [二元分类](https://en.wikipedia.org/wiki/Binary_classification)
 
 二元或二项式分类是根据分类规则将给定集合中的元素分成两组（预测每个元素属于哪个组）的任务。需要决定某项是否具有某种定性属性、某些特定特征的上下文
-  
+
+如果您想了解如何使用异常检测来检测欺诈，请访问[异常检测信用卡欺诈检测示例](../AnomalyDetection_CreditCardFraudDetection).。
+
 ## 解决方案
 
 要解决这个问题，首先需要建立一个机器学习模型。 然后，您可以在现有训练数据上训练模型，评估其准确性有多好，最后使用该模型（在另一个应用程序中部署建立的模型）来预测信用卡交易样本是否存在欺诈。
@@ -70,13 +74,9 @@
 
 [...]
 
-//Load the original single dataset
-    IDataView originalFullData = mlContext.Data.LoadFromTextFile<TransactionObservation>(fullDataSetFilePath, separatorChar: er: true);
-                 
-    // Split the data 80:20 into train and test sets, train and evaluate.
-    TrainTestData trainTestData = mlContext.Data.TrainTestSplit(originalFullData, testFraction: 0.2, seed: 1);
-    IDataView trainData = trainTestData.TrainSet;
-    IDataView testData = trainTestData.TestSet;
+// Load Datasets
+IDataView trainingDataView = mlContext.Data.LoadFromTextFile<TransactionObservation>(trainDataSetFilePath, separatorChar: ',', hasHeader: true);
+IDataView testDataView = mlContext.Data.LoadFromTextFile<TransactionObservation>(testDataSetFilePath, separatorChar: ',', hasHeader: true);
 
     
 [...]
@@ -111,7 +111,7 @@
 为了执行训练，您需要在DataView对象中提供了训练数据集后调用 `Fit()` 方法。
 
 `````csharp    
-    var model = trainingPipeline.Fit(trainDataView);
+    ITransformer model = pipeline.Fit(trainingDataView);
 `````
 
 ### 3. 评估模型
