@@ -1,8 +1,8 @@
-# GitHub 问题自动标记工具
+# GitHub Issues Labeler
 
 | ML.NET 版本 | API 类型          | 状态                        | 应用程序类型    | 数据类型 | 场景            | 机器学习任务                   | 算法                  |
 |----------------|-------------------|-------------------------------|-------------|-----------|---------------------|---------------------------|-----------------------------|
-| v1.0.0           | 动态 API | 最新版 | 控制台应用程序 | .csv 文件 和 GitHub 问题 | 问题分类 | 多类分类 | SDCA 多类分类器, AveragedPerceptronTrainer |
+| v1.3.1            | 动态 API | 最新版 | 控制台应用程序 | .csv 文件 和 GitHub 问题 | 问题分类 | 多类分类 | SDCA 多类分类器, AveragedPerceptronTrainer |
 
 
 这是一个简单的原型应用程序，演示如何使用[ML.NET](https://www.nuget.org/packages/Microsoft.ML/) APIs。主要的重点是创建、训练和使用在 Predictor.cs 类中实现的ML（机器学习）模型。
@@ -66,8 +66,8 @@ TestSingleLabelPrediction(ModelFilePathName);
 await PredictLabelsAndUpdateGitHub(ModelFilePathName);
 ```
 
-为了便于在从GitHub仓库中读取问题时进行测试，它只会加载过去10分钟中创建的并且需要标记的未标记问题。 但是您可以修改这个配置：
+为了便于在从GitHub存储库中读取问题时进行测试，它只会加载过去10分钟中创建的并且需要标记的未标记问题。 但是您可以修改这个配置：
 ```csharp
 Since = DateTime.Now.AddMinutes(-10)
 ```
-您可以修改这些设置。 在预测标签后，程序会使用预测的标签更新GitHub仓库中的问题。
+您可以修改这些设置。 在预测标签后，程序会使用预测的标签更新GitHub存储库中的问题。
