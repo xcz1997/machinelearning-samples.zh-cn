@@ -29,7 +29,7 @@ Movie Recommender 使用基于协同过滤的推荐方法。
 
 协同过滤的基本假设是，如果A（例如Gal）在某个问题上与B（例如Cesar）具有相同的观点，则A（Gal）更有可能在另一个问题上具有和B（Cesar）相同的意见，而不是一个随机的人。
 
-对于此示例，我们使用 http://files.grouplens.org/datasets/movielens/ml-latest-small.zip 数据集。
+对于本示例，我们使用 http://files.grouplens.org/datasets/movielens/ml-latest-small.zip 数据集。
 
 模型训练代码可以在[MovieRecommender_Model](https://github.com/dotnet/machinelearning-samples/tree/master/samples/csharp/end-to-end-apps/Recommendation-MovieRecommender/MovieRecommender_Model)中找到。
 

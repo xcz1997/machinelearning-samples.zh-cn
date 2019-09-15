@@ -41,7 +41,7 @@ toaster3.jpg	toaster
 ##  解决方案
 控制台应用程序项目`ImageClassification.Score`可用于基于预先训练的Inception-v3 TensorFlow模型对样本图像进行分类。
 
-再次注意，此示例仅使用预先训练的TensorFlow模型和ML.NET API。 因此，它**不会**训练任何ML.NET模型。 目前，在ML.NET中仅支持使用现有的TensorFlow训练模型进行评分/预测。
+再次注意，本示例仅使用预先训练的TensorFlow模型和ML.NET API。 因此，它**不会**训练任何ML.NET模型。 目前，在ML.NET中仅支持使用现有的TensorFlow训练模型进行评分/预测。
 
 您需要按照以下步骤执行分类测试：
 

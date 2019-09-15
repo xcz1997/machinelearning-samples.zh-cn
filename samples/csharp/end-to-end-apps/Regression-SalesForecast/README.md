@@ -61,7 +61,7 @@ eShopDashboardML是一个使用[ML.NET](https://github.com/dotnet/machinelearnin
 - 下一个周期（月）产品需求预测模型
 - 下一个周期（月）地区销售预测模型
 
-当然，当学习/研究此示例时，您可以只关注其中一个场景/模型。
+当然，当学习/研究本示例时，您可以只关注其中一个场景/模型。
 
 ![建立 -> 训练 -> 评估 -> 使用](https://raw.githubusercontent.com/feiyun0112/machinelearning-samples.zh-cn/master/samples/csharp/end-to-end-apps/Regression-SalesForecast/docs/images/modelpipeline.png)
 

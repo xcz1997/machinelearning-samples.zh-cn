@@ -100,7 +100,7 @@ var resultprediction = predEngine.Predict(sampleStatement);
 
 ## 在“TRY .NET”上尝试
 
-此示例与[Try .NET](https://github.com/dotnet/try)兼容。 唯一的区别主要是代码中的多个#regions， 以便支持“Try .NET”。 您可以在此处获取代码并进行尝试:
+本示例与[Try .NET](https://github.com/dotnet/try)兼容。 唯一的区别主要是代码中的多个#regions， 以便支持“Try .NET”。 您可以在此处获取代码并进行尝试:
 
 https://github.com/CESARDELATORRE/MLNET-WITH-TRYDOTNET-SAMPLE/blob/master/README.md
 
