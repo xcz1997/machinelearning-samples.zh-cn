@@ -17,7 +17,7 @@
 在这个示例中，我们展示了如何将排名应用于搜索引擎结果。要执行排名，目前有两种算法可用-FastTree Boosting（FastRank）和Light Gradient Boosting Machine（LightGBM）。在这个示例中，我们使用LightGBM的LambdaRank实现自动构建一个ML模型来预测排名。
 
 ## 数据集
-本示例使用的数据基于最初由Microsoft Bing提供的公共[数据集](https://www.microsoft.com/en-us/research/project/mslr/)。数据集在[CC-by 4.0](许可证(https://creativecommons.org/licenses/by/4.0/) 下发布，包括训练、验证和测试数据。
+本示例使用的数据基于最初由Microsoft Bing提供的公共[数据集](https://www.microsoft.com/en-us/research/project/mslr/)。数据集在[CC-by 4.0](https://creativecommons.org/licenses/by/4.0/)许可证下发布，包括训练、验证和测试数据。
 
 ```
 @article{DBLP:journals/corr/QinL13,
@@ -45,7 +45,7 @@
 在这些数据文件中，每一行对应一个查询-网址对。第一列是相关标签，第二列是查询id，其他列是特性。相关性标签的值越大，查询-网址对的相关性就越大。查询-网址对由136维特征向量表示。
 
 ## 机器学习任务 - 排名
-如前所述，本示例使用LightGBM LambdaRank算法，该算法使用名为[**Learning to Rank**]的监督学习技术(https://en.wikipedia.org/wiki/Learning_to_rank)。该技术要求训练/验证/测试数据集包含一组数据实例，每个实例都用它们的相关性得分（例如相关性判断标签）进行标记。标签是一个数字/序数值，例如{0，1，2，3，4}。主题专家可以手动对这些数据实例及其相关度评分进行标记。或者，可以使用其他度量来确定标签，例如对给定搜索结果的单击次数。
+如前所述，本示例使用LightGBM LambdaRank算法，该算法使用名为[**Learning to Rank**](https://en.wikipedia.org/wiki/Learning_to_rank)的监督学习技术。该技术要求训练/验证/测试数据集包含一组数据实例，每个实例都用它们的相关性得分（例如相关性判断标签）进行标记。标签是一个数字/序数值，例如{0，1，2，3，4}。主题专家可以手动对这些数据实例及其相关度评分进行标记。或者，可以使用其他度量来确定标签，例如对给定搜索结果的单击次数。
 
 预计数据集将具有比“完美”更多的“差的”相关性分数。这有助于避免将排名列表直接转换为大小相等的{0、1、2、3、4}容器。关联度得分也会被重用，这样**每个组**中大多数样本被标记为0，这意味着结果是“差的”。而只有一个或几个标记为4，这意味着结果是“完美”。下面是数据集标签分布的细分。您将注意到，0（差的）比4（完美）标签多70倍：
 * Label 0 -- 624,263
