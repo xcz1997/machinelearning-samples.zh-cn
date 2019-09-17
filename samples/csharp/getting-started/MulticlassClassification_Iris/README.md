@@ -37,7 +37,7 @@ ML.NET 版本 | API 类型          | 状态                        | 应用程�
 
 ![Build -> Train -> Evaluate -> Consume](../shared_content/modelpipeline.png)
 
-### 1. Build model
+### 1. 建立模型
 
 建立模型包括: 
 * 使用`DataReader`上传数据（`iris-train.txt`）
@@ -84,8 +84,8 @@ var trainingPipeline = dataProcessPipeline.Append(trainer);
 ITransformer trainedModel = trainingPipeline.Fit(trainingDataView);
 
 ```
-### 3. Evaluate model
-We need this step to conclude how accurate our model operates on new data. To do so, the model from the previous step is run against another dataset that was not used in training (`iris-test.txt`). This dataset also contains known iris types. `MulticlassClassification.Evaluate` calculates the difference between known types and values predicted by the model in various metrics.
+### 3. 评估模型
+我们需要这一步来总结我们的模型对新数据的准确性。 为此，上一步中的模型针对另一个未在训练中使用的数据集（`iris-test.txt`）运行。 此数据集还包含已知的鸢尾花类型。 `MulticlassClassification.Evaluate`在各种指标中计算模型预测的值和已知类型之间的差异。
 
 ```CSharp
 var predictions = trainedModel.Transform(testDataView);
@@ -141,7 +141,7 @@ Console.WriteLine($"                                           {IrisFlowers[labe
 Console.WriteLine();
 ```
 
-在`TestIrisData.Iris1`中存储有关我们想要预测类型的花的信息。
+`TestIrisData.Iris1`中存储着有关我们想要预测类型的花的信息。
 
 ```CSharp
 internal class TestIrisData
