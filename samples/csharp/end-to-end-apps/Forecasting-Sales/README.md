@@ -29,9 +29,9 @@ eShopDashboardML是一个使用[ML.NET](https://github.com/dotnet/machinelearnin
 
 了解如何在 Visual Studio 中设置以及对代码的进一步说明：
 
-- [在 Visual Studio 中设置 eShopDashboard 并运行Web应用程序](https://github.com/feiyun0112/machinelearning-samples.zh-cn/blob/master/samples/csharp/end-to-end-apps/Regression-SalesForecast/docs/Setting-up-eShopDashboard-in-Visual-Studio-and-running-it.md)
+- [在 Visual Studio 中设置 eShopDashboard 并运行Web应用程序](https://github.com/dotnet/machinelearning-samples/blob/master/samples/csharp/end-to-end-apps/Forecasting-Sales/docs/Setting-up-eShopDashboard-in-Visual-Studio-and-running-it.md)
 
-- [创建和训练您的ML模型](https://github.com/feiyun0112/machinelearning-samples.zh-cn/blob/master/samples/csharp/end-to-end-apps/Regression-SalesForecast/docs/Create-and-train-the-models-%5BOptional%5D.md)
+- [创建和训练您的ML模型](https://github.com/dotnet/machinelearning-samples/blob/master/samples/csharp/end-to-end-apps/Forecasting-Sales/docs/Create-and-train-the-models-%5BOptional%5D.md)
   - 此步骤是可选的，因为Web应用程序已配置为使用预先训练的模型。 但是，您可以创建自己的训练模型，并将预先训练的模型与您自己的模型交换。
 
 ## ML.NET代码简介
