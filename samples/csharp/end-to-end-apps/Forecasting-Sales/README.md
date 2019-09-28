@@ -124,7 +124,7 @@ eShopDashboardML是一个使用[ML.NET](https://github.com/dotnet/machinelearnin
 var trainingDataView = mlContext.Data.LoadFromTextFile<ProductData>(dataPath, hasHeader: true, separatorChar:',');
 ```
 
-在接下来的步骤中，我们将构建转换管道，指定要使用的训练器/算法，评估模型并测试其预测。 这是[**Regression**](#regression)和[**Time Series**](#time-series)示例之间的步骤开始有所不同的地方-本演练的其余部分分别研究了每种算法。
+在接下来的步骤中，我们将构建转换管道，指定要使用的训练器/算法，评估模型并测试其预测。 这是[**回归**](#regression)和[**时间序列**](#time-series)示例之间的步骤开始有所不同的地方-本演练的其余部分分别研究了每种算法。
 
 ### 回归
 
@@ -135,7 +135,7 @@ var trainingDataView = mlContext.Data.LoadFromTextFile<ProductData>(dataPath, ha
 具体来说，我们进行以下转换：
 
 - 连接当前特征生成名为**NumFeatures**的新列
-- 使用[独热编码](https://en.wikipedia.org/wiki/One-hot)**productId**
+- 使用[独热编码](https://en.wikipedia.org/wiki/One-hot)转换**productId**
 - 连接所有生成的特征生成名为**Features**的新列
 - 复制**next**列将其重命名为**Label**
 - 指定**Fast Tree Tweedie**训练器作为算法应用于模型
