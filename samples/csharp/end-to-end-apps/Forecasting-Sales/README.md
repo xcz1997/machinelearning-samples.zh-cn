@@ -1,85 +1,85 @@
-# eShopDashboardML - Sales forecasting
+# eShopDashboardML - 销售预测 
 
-| ML.NET version | API type    | Status     | App Type                             | Data type                 | Scenario       | ML Task                 | Algorithms                                           |
-|----------------|-------------|------------|--------------------------------------|---------------------------|----------------|-------------------------|------------------------------------------------------|
-| v1.3.1         | Dynamic API | Up-to-date | ASP.NET Core web app and Console app | SQL Server and .csv files | Sales forecast | Regression, Time Series | FastTreeTweedie Regression, Single Spectrum Analysis |
+| ML.NET 版本 | API 类型          | 状态                        | 应用程序类型    | 数据类型 | 场景            | 机器学习任务                   | 算法                  |
+|----------------|-------------------|-------------------------------|-------------|-----------|---------------------|---------------------------|-----------------------------|
+| v1.3.1           | 动态 API | 最新版本 | ASP.NET Core Web应用程序和控制台应用程序 | SQL Server 和 .csv 文件 | 销售预测  | 回归 | FastTreeTweedie Regression, Single Spectrum Analysis |
 
-eShopDashboardML is a web app with Sales Forecast predictions (per product and per country) using [Microsoft Machine Learning .NET (ML.NET)](https://github.com/dotnet/machinelearning).
+eShopDashboardML是一个使用[ML.NET](https://github.com/dotnet/machinelearning) 进行（每个产品和每个地区）销售预测的Web应用程序。
 
-## Overview
+# 概述
 
-This end-to-end sample app highlights the usage of ML.NET API by showing the following topics:
+这个终端示例应用程序通过展现以下主题着重介绍ML.NET API的用法:
 
-1. How to train, build and generate ML models:
-   - Implemented as a [console app](src\eShopForecastModelsTrainer) using .NET Core.
-2. How to predict upcoming months of sales forecasts by using the trained ML model:
-   - Implemented as a single, monolithic [web app](src/eShopDashboard) using [ASP.NET Core Razor](https://docs.microsoft.com/aspnet/core/tutorials/razor-pages/).
+1. 如何训练，建立和生成ML模型
+   - 使用.NET Core实现一个[控制台应用程序](https://github.com/feiyun0112/machinelearning-samples.zh-cn/blob/master/samples/csharp/end-to-end-apps/Regression-SalesForecast/src%5CeShopForecastModelsTrainer)。
+2. 如何使用经过训练的ML模型做下个月的销售预测
+   - 使用[ASP.NET Core Razor](https://docs.microsoft.com/aspnet/core/tutorials/razor-pages/)实现一个独立的，单体[Web应用程序](https://github.com/feiyun0112/machinelearning-samples.zh-cn/blob/master/samples/csharp/end-to-end-apps/Regression-SalesForecast/src%5CeShopDashboard)。
 
-The app is also using a SQL Server database for regular product catalog and orders info, as many typical web apps using SQL Server. In this case, since it is an example, it is, by default, using a localdb SQL database so there's no need to setup a real SQL Server. The localdb database will be created, along with sample populated data, the first time you run the web app.
+该应用程序还使用一个SQL Server数据库存储常规产品目录和订单信息，就像许多使用SQL Server的典型Web应用程序一样。在本例中，由于它是一个示例，因此默认情况下使用localdb SQL数据库，因此不需要设置真正的SQL Server。在第一次运行Web应用程序时，将创建localdb数据库并包含示例数据。
 
-If you want to use a real SQL Server or Azure SQL Database, you just need to change the connection string in the app.
+如果要使用真正的SQL Server或Azure SQL数据库，只需更改应用程序中的连接字符串即可。
 
-When you run the app, it opens the webpage with a search box says "Type a product." You can type for any product, i.e. "bottle." Then a list of products related to keyword "bottle" will show in autocomplete suggestions. Once you select any product, then the sales forecast of that product will be shown as below.
+当你运行应用程序时，它会打开一个网页，上面有一个搜索框，上面写着“输入一个产品”。你可以输入任何产品，例如“瓶子”。然后与关键字“瓶子”相关的产品列表将显示在自动完成建议中。选择任何产品后，该产品的销售预测将显示如下。
 
-Here's a sample screenshot of the web app and one of the forecast predictions:
+这是Web应用程序的一个销售预测屏幕截图示例：
 
 ![image](./docs/images/eShopDashboard.png)
 
-## Setup
+## 设置
 
-Learn how to set up the sample's environment in Visual Studio along with further explanations on the code:
+了解如何在 Visual Studio 中设置以及对代码的进一步说明：
 
-- [Setting up eShopDashboard in Visual Studio and running the web app](docs/Setting-up-eShopDashboard-in-Visual-Studio-and-running-it.md)
+- [在 Visual Studio 中设置 eShopDashboard 并运行Web应用程序](https://github.com/feiyun0112/machinelearning-samples.zh-cn/blob/master/samples/csharp/end-to-end-apps/Regression-SalesForecast/docs/Setting-up-eShopDashboard-in-Visual-Studio-and-running-it.md)
 
-- [Create and Train your ML models](docs/Create-and-train-the-models-%5BOptional%5D.md)
-  - This step is optional as the web app is already configured to use a pre-trained model. But you can create your own trained model and swap the pre-trained model with your own.
+- [创建和训练您的ML模型](https://github.com/feiyun0112/machinelearning-samples.zh-cn/blob/master/samples/csharp/end-to-end-apps/Regression-SalesForecast/docs/Create-and-train-the-models-%5BOptional%5D.md)
+  - 此步骤是可选的，因为Web应用程序已配置为使用预先训练的模型。 但是，您可以创建自己的训练模型，并将预先训练的模型与您自己的模型交换。
 
-## ML.NET Code Overview
+## ML.NET代码简介
 
-### Problem
+### 问题
 
-This problem is centered around country and product forecasting based on previous sales.
+这个问题是基于之前的销售情况围绕地区和产品进行销售预测
 
-### DataSet
+### 数据集
 
-To solve this problem, two independent ML models are built that take the following datasets as input:  
+为了解决这个问题，您建立了两个独立的ML模型，它们以以下数据集作为输入：
 
-| Data Set            | Columns                                                            |
-|---------------------|--------------------------------------------------------------------|
-| **products stats**  | next, productId, year, month, units, avg, count, max, min, prev    |
-| **country stats**   | next, country, year, month, max, min, std, count, sales, med, prev |
+| 数据集 | 列 |
+|----------|--------|
+| **products stats**  | next, productId, year, month, units, avg, count, max, min, prev      |
+| **country stats**  | next, country, year, month, max, min, std, count, sales, med, prev   |
 
-[Explanation of Dataset](docs/Details-of-Dataset.md) - Goto this link for detailed information on dataset.
+[数据集说明](docs/Details-of-Dataset.md) - 转到此链接可获取有关数据集的详细信息。
 
-### ML Task - Forecasting with Regression and Forecasting with Time Series
+### ML 任务 - 回归预测与时间序列预测
 
-The sample shows two different ML tasks and algorithms that can be used for forecasting:
+这个示例显示了可用于预测的两种不同的ML任务和算法：
 
-- **Regression** using FastTreeTweedie Regression
-- **Time Series** using Single Spectrum Analysis
+- **回归** 使用 FastTreeTweedie Regression
+- **时间序列** 使用 Single Spectrum Analysis
 
-**Regression** is a supervised machine learning task that is used to predict the value of the **next** period (in this case, the sales prediction) from a set of related features/variables. **Regression** works best with linear data.
+**Regression** 是一个有监督的机器学习任务，用于从一组相关的特征/变量预测**下一个**期间的值（在本例中是销售预测）。 **Regression** 最适合线性数据。
 
-**Time Series** is an estimation technique that can be used to forecast **multiple** periods in the future. **Time Series** works well in scenarios that involve non-linear data where trends and patterns are difficult to distinguish.
+**Time Series** 是一种估计技术，可用于预测未来的**多个**周期。**时间序列**在涉及难以区分趋势和模式的非线性数据的情况下很好地工作。
 
-### Solution
+### 解决方案
 
-To solve this problem, first we will build the ML models by training each model on existing data. Next, we will evaluate how good it is. Finally, we will consume the model to predict sales.
+为了解决这个问题，首先我们将建立ML模型，同时根据现有数据训练每个模型，评估其有多好，最后使用模型预测销售。
 
-Note that the **Regression** sample implements two independent models to forecast linear data:
+注意**回归**样本实现了两个独立的模型来预测线性数据：
 
-- Model to predict product's demand forecast for the next period (month)
-- Model to predict country's sales forecast for the next period (month)
+- 下一个周期（月）产品需求预测模型
+- 下一个周期（月）地区销售预测模型
 
-The **Time Series** sample currently implements the product's demand forecast for the next **two** periods (months). The **Time Series** sample uses the same products as in the **Regression** sample so that you can compare the forecasts from the two algorithms.
+**时间序列**样本实现产品在未来**两个**周期（月）的需求预测。**时间序列**样本使用与**回归**样本相同的产品，以便您可以比较两种算法的预测。
 
-When learning/researching the samples, you can focus choose to focus specifically on regression or time series.
+在学习/研究样本时，您可以选择专注于回归或时间序列。
 
 ![Build -> Train -> Evaluate -> Consume](docs/images/modelpipeline.png)
 
-#### Load the Dataset
+#### 加载数据集
 
-Both the **Regression** and **Time Series** samples start by loading data using **TextLoader**. To use **TextLoader**, we must specify the type of the class that represents the data schema. Our class type is **ProductData**.
+**回归**和**时间序列**样本均通过使用**TextLoader**加载数据开始。 要使用**TextLoader**，我们必须指定代表数据模式的类的类型。 我们的类类型为**ProductData**。
 
 ```csharp
  public class ProductData
@@ -118,31 +118,31 @@ Both the **Regression** and **Time Series** samples start by loading data using 
     }
 ```
 
-Load the dataset into the **DataView**.
+将数据集加载到**DataView**中。
 
 ```csharp
 var trainingDataView = mlContext.Data.LoadFromTextFile<ProductData>(dataPath, hasHeader: true, separatorChar:',');
 ```
 
-In the following steps, we will build the pipeline transformations, specify which trainer/algorithm to use, evaluate the models, and test their predictions. This is where the steps start to differ between the [**Regression**](#regression) and [**Time Series**](#time-series) samples - the remainder of this walkthrough looks at each of these algorithms separately.
+在接下来的步骤中，我们将构建转换管道，指定要使用的训练器/算法，评估模型并测试其预测。 这是[**Regression**](#regression)和[**Time Series**](#time-series)示例之间的步骤开始有所不同的地方-本演练的其余部分分别研究了每种算法。
 
-### Regression
+### 回归
 
-#### 1. Regression: Create the Pipeline
+#### 1. 回归: 创建管道
 
-This step shows how to create the pipeline that will later be used for building and training the **Regression** model.
+此步骤说明如何创建稍后用于构建和训练**回归**模型的管道。
 
-Specifically, we do the following transformations:
+具体来说，我们进行以下转换：
 
-- Concatenate current features to a new column named **NumFeatures**.
-- Transform **productId** using [one-hot encoding](https://en.wikipedia.org/wiki/One-hot).
-- Concatenate all generated features in one column named **Features**.
-- Copy **next** column to rename it to **Label**.
-- Specify the **Fast Tree Tweedie** trainer as the algorithm to apply to the model.
+- 连接当前特征生成名为**NumFeatures**的新列
+- 使用[独热编码](https://en.wikipedia.org/wiki/One-hot)**productId**
+- 连接所有生成的特征生成名为**Features**的新列
+- 复制**next**列将其重命名为**Label**
+- 指定**Fast Tree Tweedie**训练器作为算法应用于模型
 
-You can load the dataset either before or after designing the pipeline. Although this step is just configuration, it is lazy and won't be loaded until training the model in the next step.
+在设计管道之后，您可以将数据集加载到DataView中，而且此步骤只是配置，DataView是延迟加载，在下一步训练模型之前数据不会被加载。
 
-[Model build and train](./src/eShopForecastModelsTrainer/RegressionTrainer/RegressionProductModelHelper.cs)
+[建立模型并训练](./src/eShopForecastModelsTrainer/RegressionTrainer/RegressionProductModelHelper.cs)
 
 ```csharp
 var trainer = mlContext.Regression.Trainers.FastTreeTweedie("Label", "Features");
@@ -157,9 +157,9 @@ var trainingPipeline = mlContext.Transforms.Concatenate(outputColumnName: "NumFe
                     .Append(trainer);
 ```
 
-#### 2. Regression: Evaluate the Model
+#### 2. 回归: 评估模型
 
-In this case, the **Regression** model is evaluated before training the model with a cross-validation approach. This is to obtain metrics that indicate the accuracy of the model.
+在本例中，**回归**模型的评估是在使用交叉验证方法训练模型之前执行的，因此您将获得指示模型准确度的指标。
 
 ```csharp
 var crossValidationResults = mlContext.Regression.CrossValidate(data:trainingDataView, estimator:trainingPipeline, numberOfFolds: 6, labelColumnName: "Label");
@@ -167,28 +167,28 @@ var crossValidationResults = mlContext.Regression.CrossValidate(data:trainingDat
 ConsoleHelper.PrintRegressionFoldsAverageMetrics(trainer.ToString(), crossValidationResults);
 ```
 
-#### 3. Regression: Train the Model
+#### 3. 回归: 训练模型
 
-After building the pipeline, we train the **Regression** forecast model by fitting or using the training data with the selected algorithm. In this step, the model is built, trained and returned as an object:
+在建立管道之后，我们通过使用所选算法拟合或使用训练数据来训练预测**回归**模型。 在该步骤中，模型被建立，训练并作为对象返回：
 
 ```csharp
 var model = trainingPipeline.Fit(trainingDataView);
 ```
 
-#### 4. Regression: Save the Model
+#### 4. 回归: 保存模型
 
-Once the **Regression** model is created and evaluated, you can save it into a **.zip** file which can be consumed by any end-user application with the following code:
+一旦创建和评估了**回归**模型，就可以将它保存到**zip**文件中，任何最终用户的应用程序都可以通过以下代码使用它：
 
 ```csharp
 using (var file = File.OpenWrite(outputModelPath))
     mlContext.Model.Save(model, trainingDataView.Schema, file);
 ```
 
-#### 5. Regression: Test the Prediction
+#### 5. 回归: 测试预测
 
-To create a prediction, load the **Regression** model from the **.zip** file.
+从**zip**文件中加载**回归**模型。
 
-This sample uses the last month of a product's sample data to predict the unit sales in the next month.
+本示例使用产品样本数据的最后一个月来预测下个月的单位销售额。
 
 ```csharp
 ITransformer trainedModel;
@@ -220,25 +220,25 @@ ProductUnitPrediction prediction = predictionEngine.Predict(dataSample);
 Console.WriteLine($"Product: {dataSample.productId}, month: {dataSample.month + 1}, year: {dataSample.year} - Real value (units): 551, Forecast Prediction (units): {prediction.Score}");
 ```
 
-### Time Series
+### 时间序列
 
-#### 1. Time Series: Create the Pipeline
+#### 1. 时间序列: 创建管道
 
-This step shows how to create the pipeline that will later be used for training the **Time Series** model.
+此步骤说明如何创建稍后用于训练**时间序列**模型的管道。
 
-Specifically, the **Single Spectrum Analysis (SSA)** trainer is the algorithm that is used. This algorithm uses the following parameters:
+具体来说，**Single Spectrum Analysis (SSA)**训练器是所使用的算法。此算法使用以下参数：
 
-- **outputColumnName**: This is the name of the column that will be used to store predictions. The column must be a vector of type **Single**. In a later step, we define a class named **ProductUnitTimeSeriesPrediction** that contains this output column.
-- **inputColumnName**: This is the name of the column that is being predicted/forecasted. The column contains a value at a timestamp in the time series and must be of type **Single**. In our sample, we are predicting/forecasting product **units**.
-- **windowSize**:  This parameter is used to define a sliding window of time that is used by the algorithm to decompose the time series data into trend, seasonal, or noise components. Typically, you should start with a window size that is representative of the business cycle in your scenario. In our sample, the product data is based on a 12 month cycle so we will select a window size that is a multiple of 12.
-- **seriesLength**: TODO - Need specific description
-- **trainSize**: TODO - Need specific description
-- **horizon**: This parameter indicates the number of time periods to predict/forecast. In our sample, we specify 2 to indicate that the next 2 months of product units will be predicated/forecasted.
-- **confidenceLevel**: This parameter indicates the likelihood the prediction/forecast value will fall within the specified interval bounds. TODO - Need to confirm this is correct. Typically, .95 is an acceptable starting point.
-- **confidenceLowerBoundColumn**: This is the name of the column that will be used to store the **lower** confidence interval bound for each forecasted value. The **ProductUnitTimeSeriesPrediction** class also contains this output column.
-- **confidenceUpperBoundColumn**: This is the name of the column that will be used to store the **upper** confidence interval bound for each forecasted value. The **ProductUnitTimeSeriesPrediction** class also contains this output column.
+- **outputColumnName**: 这是将用于存储预测的列的名称。列必须是**single**类型的向量。在后面的步骤中，我们定义了一个名为**ProductUnitTimeSeriesPrediction**的类，该类包含此输出列。
+- **inputColumnName**: 这是正在预测的列的名称。该列包含时间序列中时间戳处的值，并且必须是**single**类型。在我们的示例中，我们正在预测产品**数量**。
+- **windowSize**:  该参数用于定义滑动时间窗，该滑动时间窗用于将时间序列数据分解为趋势、季节或噪声分量。通常，应该从窗口大小开始，窗口大小代表场景中的业务周期。在我们的示例中，产品数据基于12个月的周期，因此我们将选择一个窗口大小为12的倍数。
+- **seriesLength**: 
+- **trainSize**: 
+- **horizon**: 此参数指示要预测的时段数。在我们的示例中，我们指定了2，以表示将预测未来2个月的产品数量。
+- **confidenceLevel**: 此参数表示预测值落在指定间隔范围内的可能性。通常，.95是一个可接受的起点。
+- **confidenceLowerBoundColumn**: 这是用于存储每个预测值的**下限**置信区间的列的名称。**ProductUnitTimeSeriesPrediction**类也包含此输出列。
+- **confidenceUpperBoundColumn**: 这是将用于存储每个预测值的**上限**置信区间的列的名称。**ProductUnitTimeSeriesPrediction**类也包含此输出列。
 
-Specifically, we add the following trainer to the pipeline:
+具体来说，我们在管道中增加了以下训练器：
 
 ```csharp
 // Create and add the forecast estimator to the pipeline.
@@ -254,27 +254,27 @@ IEstimator<ITransformer> forecastEstimator = mlContext.Forecasting.ForecastBySsa
     confidenceUpperBoundColumn: nameof(ProductUnitTimeSeriesPrediction.ConfidenceUpperBound));
 ```
 
-#### 2. Time Series: Train the Model
+#### 2. 时间序列: 训练模型
 
-Before training the **Time Series** model, we first must filter the loaded dataset to select the data series for the specific product that will be used for forecasting sales.
+在训练**时间序列**模型之前，我们首先必须筛选加载的数据集，以选择将用于预测销售的特定产品的数据序列。
 
 ```csharp
 var productId = 988;
 IDataView productDataView = mlContext.Data.FilterRowsByColumn(allProductsDataView, nameof(ProductData.productId), productId, productId + 1);
 ```
 
-Next, we train the model using the data series for the specified product.
+接下来，我们使用指定产品的数据系列来训练模型。
 
 ```csharp
 // Train the forecasting model for the specified product's data series.
 ITransformer forecastTransformer = forecastEstimator.Fit(productDataView);
 ```
 
-#### 3. Time Series: Save the Model
+#### 3. 时间序列: 保存模型
 
-To save the model, we first must create the **TimeSeriesPredictionEngine** which is used for both getting predictions and saving the model.
+要保存模型，我们首先必须创建**TimeSeriesPredictionEngine**用于获取预测和保存模型。
 
-The **Time Series** model is saved using the **CheckPoint** method which saves the model to a **.zip** file that can be consumed by any end-user application:
+使用**CheckPoint**方法保存**时间序列**模型，该方法将模型保存到任何最终用户应用程序都可以使用的**zip**文件中：
 
 ```csharp
 // Create the forecast engine used for creating predictions.
@@ -284,11 +284,11 @@ TimeSeriesPredictionEngine<ProductData, ProductUnitTimeSeriesPrediction> forecas
 forecastEngine.CheckPoint(mlContext, outputModelPath);
 ```
 
-You may notice that this is different from the above **Regression** sample which instead used the **Save** method for saving the model. **Time Series** is different because it requires that the model's state to be continuously updated with new observed values as predictions are made. As a result, the **CheckPoint** method exists to update and save the model state on a reoccurring basis. This will be shown in further detail in a later step of this sample. For now, just remember that **Checkpoint** is used for saving the **Time Series** model.
+您可能会注意到这与上面的**回归**示例不同，后者使用**保存**方法来保存模型。**时间序列**是不同的，因为它要求在进行预测时用新的观测值不断更新模型的状态。因此，存在**CheckPoint**方法来更新和保存模型状态。这将在本示例后面的步骤中进一步详细说明。现在，请记住**CheckPoint**用于保存**时间序列**模型。
 
-#### 4. Time Series: Test the Prediction
+#### 4. 时间序列: 测试预测
 
-To get a prediction, load the **Time Series** model from the **.zip** file and create a new **TimeSeriesPredictionEngine**. After this, we can get a prediction.
+要获得预测，请从**zip**文件加载**时间序列**模型，并创建新的**TimeSeriesPredictionEngine**。在这之后，我们可以得到一个预测。
 
 ```csharp
 // Load the forecast engine that has been previously saved.
@@ -304,7 +304,7 @@ TimeSeriesPredictionEngine<ProductData, ProductUnitTimeSeriesPrediction> forecas
 ProductUnitTimeSeriesPrediction originalSalesPrediction = forecastEngine.Predict();
 ```
 
-The **ProductUnitTimeSeriesPrediction** type that we specified when we created the **TimeSeriesPredictionEngine** is used to store the prediction results:
+创建**TimeSeriesPredictionEngine**时指定的**ProductUnitTimeSeriesPrediction**类型用于存储预测结果：
 
 ```csharp
    public class ProductUnitTimeSeriesPrediction
@@ -317,24 +317,24 @@ The **ProductUnitTimeSeriesPrediction** type that we specified when we created t
     }
 ```
 
-Remember that when we created the SSA forecasting trainer using the **ForecastBySsa** method, we provided the following parameter values:
+记住，当我们使用**ForecastBySsa**方法创建SSA Forecasting Trainer时，我们提供了以下参数值：
 
 - **horizon**: 2
 - **confidenceLevel**: .95f
 
-As a result of this, when we call the **Predict** method using the loaded model, the **ForecastedProductUnits** vector will contain **two** forecasted values. Similarly, the **ConfidenceLowerBound** and **ConfidenceUpperBound** vectors will each contain **two** values based on the specified **confidenceLevel**.
+因此，当我们使用加载的模型调用**Predict**方法时，**ForecastedProductUnits**向量将包含**两个**预测值。同样，**ConfidenceLowerBound**和**ConfidenceUpperBound**向量将分别包含基于指定的**confidenceLevel**的**两个**值。
 
-You may notice that the **Predict** method has several overloads that accept the following parameters:
+您可能注意到**Predict**方法有几个重载，它们接受以下参数：
 
 - **horizon**
 - **confidenceLevel**
 - **ProductData example**
 
-This allows you to specify new values for **horizon** and **confidenceLevel** each time that you do a prediction. Also, you can pass in new observed **ProductData** values for the time series using the **example** parameter.
+这允许您在每次进行预测时为**horizon**和**confidenceLevel**指定新值。此外，还可以使用**example**参数为时间序列传递新的观察到的**ProductData**值。
 
-When calling **Predict** with new observed **ProductData** values, this updates the model state with these data points in the time series. You may then choose to save this model to disk by calling the **CheckPoint** method.
+当使用新的观察到的**ProductData**值调用**Predict**时，这将用时间序列中的这些数据点更新模型状态。然后，您可以选择通过调用**CheckPoint**方法将此模型保存到磁盘。
 
-This is also seen in our sample:
+这在我们的示例中也可以看到：
 
 ```csharp
 ProductUnitTimeSeriesPrediction updatedSalesPrediction = forecastEngine.Predict(newProductData, horizon: 1);
@@ -343,9 +343,7 @@ ProductUnitTimeSeriesPrediction updatedSalesPrediction = forecastEngine.Predict(
  forecastEngine.CheckPoint(mlContext, outputModelPath);
 ```
 
-// TODO: Need clarification on how to evaluate the accuracy of this model; there is the confidence level, but any other mechanism besides that?
+## 引用
 
-## Citation
-
-eShopDashboardML dataset is based on a public Online Retail Dataset from **UCI**: http://archive.ics.uci.edu/ml/datasets/online+retail
-> Daqing Chen, Sai Liang Sain, and Kun Guo, Data mining for the online retail industry: A case study of RFM model-based customer segmentation using data mining, Journal of Database Marketing and Customer Strategy Management, Vol. 19, No. 3, pp. 197â€“208, 2012 (Published online before print: 27 August 2012. doi: 10.1057/dbm.2012.17).
+eShopDashboardML数据集是基于**UCI**(http://archive.ics.uci.edu/ml/datasets/online+retail) 的一个公共在线零售数据集
+> Daqing Chen, Sai Liang Sain, 和 Kun Guo, 在线零售业的数据挖掘: 基于RFM模型的数据挖掘客户细分案例研究, 数据库营销与客户战略管理杂志, Vol. 19, No. 3, pp. 197â€“208, 2012 (印刷前在线发布: 27 August 2012. doi: 10.1057/dbm.2012.17).
