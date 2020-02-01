@@ -1,8 +1,8 @@
 # 鸢尾花分类
 
-| ML.NET 版本 | API 类型          | 状态                        | 应用程序类型    | 数据类型 | 场景            | 机器学习任务                   | 算法                  |
+ML.NET 版本 | API 类型          | 状态                        | 应用程序类型    | 数据类型 | 场景            | 机器学习任务                   | 算法                  |
 |----------------|-------------------|-------------------------------|-------------|-----------|---------------------|---------------------------|-----------------------------|
-| v0.7           | 动态 API | 最新版本 | 控制台应用程序 | .txt 文件 | 鸢尾花分类 | 多类分类 | Sdca Multi-class |
+| v1.3.1           | 动态 API | 最新版本 | 控制台应用程序 | .txt 文件 | 鸢尾花分类 | 多类分类 | Sdca Multi-class |
 
 在这个介绍性示例中，您将看到如何使用[ML.NET](https://www.microsoft.com/net/learn/apps/machine-learning-and-ai/ml-dotnet)来预测鸢尾花的类型。 在机器学习领域，这种类型的预测被称为**多类分类**。
 
@@ -52,53 +52,48 @@
 var mlContext = new MLContext(seed: 0);
 
 // STEP 1: Common data loading configuration
-var textLoader = IrisTextLoaderFactory.CreateTextLoader(mlContext);
-var trainingDataView = textLoader.Read(TrainDataPath);
-var testDataView = textLoader.Read(TestDataPath);
+var trainingDataView = mlContext.Data.LoadFromTextFile<IrisData>(TrainDataPath, hasHeader: true);
+var testDataView = mlContext.Data.LoadFromTextFile<IrisData>(TestDataPath, hasHeader: true);
 
 // STEP 2: Common data process configuration with pipeline data transformations
-var dataProcessPipeline = mlContext.Transforms.Concatenate("Features", "SepalLength",
-                                                                       "SepalWidth",
-                                                                       "PetalLength",
-                                                                       "PetalWidth" );
+var dataProcessPipeline = mlContext.Transforms.Conversion.MapValueToKey(outputColumnName: "KeyColumn", inputColumnName: nameof(IrisData.Label))
+        .Append(mlContext.Transforms.Concatenate("Features", nameof(IrisData.SepalLength),
+                                                            nameof(IrisData.SepalWidth),
+                                                            nameof(IrisData.PetalLength),
+                                                            nameof(IrisData.PetalWidth))
+                                                            .AppendCacheCheckpoint(mlContext)); 
+                                                            // Use in-memory cache for small/medium datasets to lower training time. 
+                                                            // Do NOT use it (remove .AppendCacheCheckpoint()) when handling very large datasets. 
 
-// STEP 3: Set the training algorithm, then create and config the modelBuilder                            
-var modelBuilder = new Common.ModelBuilder<IrisData, IrisPrediction>(mlContext, dataProcessPipeline);
-// We apply our selected Trainer 
-var trainer = mlContext.MulticlassClassification.Trainers.StochasticDualCoordinateAscent(labelColumn: "Label", featureColumn: "Features");
-modelBuilder.AddTrainer(trainer);
+
+// STEP 3: Set the training algorithm, then create and config the modelBuilder                         
+var trainer = mlContext.MulticlassClassification.Trainers.SdcaMaximumEntropy(labelColumnName: "KeyColumn", featureColumnName: "Features")
+            .Append(mlContext.Transforms.Conversion.MapKeyToValue(outputColumnName: nameof(IrisData.Label) , inputColumnName: "KeyColumn"));
+
+var trainingPipeline = dataProcessPipeline.Append(trainer);
 ```
+
 ### 2. 训练
 训练模型是在训练数据（已知鸢尾花类型）上运行所选算法以调整模型参数的过程。它在评估器对象中的`Fit()` 方法中实现。 
 
 为了执行训练，我们只需调用方法时传入在DataView对象中提供的训练数据集（iris-train.txt文件）。
+
 ```CSharp
 // STEP 4: Train the model fitting to the DataSet            
-modelBuilder.Train(trainingDataView);
 
-[...]
-public ITransformer Train(IDataView trainingData)
-{
-    TrainedModel = TrainingPipeline.Fit(trainingData);
-    return TrainedModel;
-}
+ITransformer trainedModel = trainingPipeline.Fit(trainingDataView);
+
 ```
 ### 3. 评估模型
-我们需要这一步来总结我们的模型对新数据的准确性。 为此，上一步中的模型针对另一个未在训练中使用的数据集（`iris-test.txt`）运行。 此数据集还包含已知的鸢尾花类型。
-`MulticlassClassification.Evaluate`计算模型预测的值和已知类型之间差异的各种指标。
+我们需要这一步来总结我们的模型对新数据的准确性。 为此，上一步中的模型针对另一个未在训练中使用的数据集（`iris-test.txt`）运行。 此数据集还包含已知的鸢尾花类型。 `MulticlassClassification.Evaluate`在各种指标中计算模型预测的值和已知类型之间的差异。
+
 ```CSharp
-var metrics = modelBuilder.EvaluateMultiClassClassificationModel(testDataView, "Label");
+var predictions = trainedModel.Transform(testDataView);
+var metrics = mlContext.MulticlassClassification.Evaluate(predictions, "Label", "Score");
+
 Common.ConsoleHelper.PrintMultiClassClassificationMetrics(trainer.ToString(), metrics);
-    
-[...]
-public MultiClassClassifierEvaluator.Result EvaluateMultiClassClassificationModel(IDataView testData, string label="Label", string score="Score")
-{
-    CheckTrained();
-    var predictions = TrainedModel.Transform(testData);
-    var metrics = _mlcontext.MulticlassClassification.Evaluate(predictions, label: label, score: score);
-    return metrics;
-}
 ```
+
 >*要了解关于如何理解指标的更多信息，请参阅[ML.NET指南](https://docs.microsoft.com/en-us/dotnet/machine-learning/) 中的机器学习词汇表，或者使用任何有关数据科学和机器学习的可用材料*.
 
 如果您对模型的质量不满意，可以采用多种方法来改进，这将在*examples*类别中进行介绍。 
@@ -106,22 +101,48 @@ public MultiClassClassifierEvaluator.Result EvaluateMultiClassClassificationMode
 在模型被训练之后，我们可以使用`Predict()` API来预测这种花属于每个鸢尾花类型的概率。
 
 ```CSharp
-var modelScorer = new Common.ModelScorer<IrisData, IrisPrediction>(mlContext);
-modelScorer.LoadModelFromZipFile(ModelPath);
 
-var prediction = modelScorer.PredictSingle(SampleIrisData.Iris1);
-Console.WriteLine($"Actual: setosa.     Predicted probability: setosa:      {prediction.Score[0]:0.####}");
-Console.WriteLine($"                                           versicolor:  {prediction.Score[1]:0.####}");
-Console.WriteLine($"                                           virginica:   {prediction.Score[2]:0.####}");
-
-[...]
-public TPrediction PredictSingle(TObservation input)
+ITransformer trainedModel;
+using (var stream = new FileStream(ModelPath, FileMode.Open, FileAccess.Read, FileShare.Read))
 {
-    CheckTrainedModelIsLoaded();
-    return PredictionFunction.Predict(input);
+    trainedModel = mlContext.Model.Load(stream);
 }
+
+// Create prediction engine related to the loaded trained model
+var predEngine = trainedModel.CreatePredictionEngine<IrisData, IrisPrediction>(mlContext);
+
+// During prediction we will get Score column with 3 float values.
+// We need to find way to map each score to original label.
+// In order to do what we need to get TrainingLabelValues from Score column.
+// TrainingLabelValues on top of Score column represent original labels for i-th value in Score array.
+// Let's look how we can convert key value for PredictedLabel to original labels.
+// We need to read KeyValues for "PredictedLabel" column.
+VBuffer<float> keys = default;
+predEngine.OutputSchema["PredictedLabel"].GetKeyValues(ref keys);
+var labelsArray = keys.DenseValues().ToArray();
+// Since we apply MapValueToKey estimator with default parameters, key values
+// depends on order of occurence in data file. Which is "Iris-setosa", "Iris-versicolor", "Iris-virginica"
+// So if we have Score column equal to [0.2, 0.3, 0.5] that's mean what score for
+// Iris-setosa is 0.2
+// Iris-versicolor is 0.3
+// Iris-virginica is 0.5.
+//Add a dictionary to map the above float values to strings. 
+Dictionary<float, string> IrisFlowers = new Dictionary<float, string>();
+IrisFlowers.Add(0, "Setosa");
+IrisFlowers.Add(1, "versicolor");
+IrisFlowers.Add(2, "virginica");
+
+Console.WriteLine("=====Predicting using model====");
+//Score sample 1
+var resultprediction1 = predEngine.Predict(SampleIrisData.Iris1);
+
+Console.WriteLine($"Actual: setosa.     Predicted label and score: {IrisFlowers[labelsArray[0]]}:      {resultprediction1.Score[0]:0.####}");
+Console.WriteLine($"                                           {IrisFlowers[labelsArray[1]]}:  {resultprediction1.Score[1]:0.####}"); Console.WriteLine($"                                           {IrisFlowers[labelsArray[2]]}:   {resultprediction1.Score[2]:0.####}");
+Console.WriteLine();
 ```
-在`TestIrisData.Iris1`中存储有关我们想要预测类型的花的信息。
+
+`TestIrisData.Iris1`中存储着有关我们想要预测类型的花的信息。
+
 ```CSharp
 internal class TestIrisData
 {

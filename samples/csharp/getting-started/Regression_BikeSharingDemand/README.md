@@ -2,7 +2,7 @@
 
 | ML.NET 版本 | API 类型          | 状态                        | 应用程序类型    | 数据类型 | 场景            | 机器学习任务                   | 算法                  |
 |----------------|-------------------|-------------------------------|-------------|-----------|---------------------|---------------------------|-----------------------------|
-| v0.7 | 动态 API |最新版 | 控制台应用程序 | .csv 文件 | 需求预测 | 回归 | Fast Tree 回归器与其他回归算法的比较|
+| v1.3.1 | 动态 API | 最新版 | 控制台应用程序 | .csv 文件 | 需求预测 | 回归 | Fast Tree regressor compared to additional regression algorithms|
 
 在这个示例中，您可以看到如何使用ML.NET来预测自行车的需求。由于您试图基于过去的观测数据预测特定的数值，在机器学习中，这种类型的预测方法被称为回归。
 
@@ -34,3 +34,4 @@ https://archive.ics.uci.edu/ml/datasets/bike+sharing+dataset
 - Poisson Regressor
 - SDCA (Stochastic Dual Coordinate Ascent) Regressor
 - FastTreeTweedie
+

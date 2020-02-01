@@ -2,7 +2,7 @@
 
 | ML.NET 版本 | API 类型          | 状态                        | 应用程序类型    | 数据类型 | 场景            | 机器学习任务                   | 算法                  |
 |----------------|-------------------|-------------------------------|-------------|-----------|---------------------|---------------------------|-----------------------------|
-| v0.7           | 动态 API | 最新版本 | 控制台应用程序 | .csv 文件 | 价格预测 | 回归 | Sdca 回归 |
+| v1.3.1           | 动态 API | 最新版本 | 控制台应用程序 | .csv 文件 | 价格预测 | 回归 | Sdca Regression |
 
 在这个介绍性示例中，您将看到如何使用[ML.NET](https://www.microsoft.com/net/learn/apps/machine-learning-and-ai/ml-dotnet)预测出租车费。在机器学习领域，这种类型的预测被称为**回归**
 
@@ -30,53 +30,39 @@
 ## 解决方案
 为了解决这个问题，首先我们将建立一个ML模型。然后，我们将在现有数据的基础上训练模型，评估其有多好，最后我们将使用该模型来预测出租车费。 
 
-![建立 -> 训练 -> 评估 -> 使用](../shared_content/modelpipeline.png)
+![Build -> Train -> Evaluate -> Consume](../shared_content/modelpipeline.png)
 
 ### 1. 建立模型
 
-建立模型包括：上传数据（使用`TextLoader`加载`taxi-fare-train.csv`），对数据进行转换，以便ML算法（本例中为“StochasticDualCoordinateAscent”）能够有效地使用它：
+建立模型包括：上传数据（使用`TextLoader`加载`taxi-fare-train.csv`），对数据进行转换，以便ML算法（本例中为`StochasticDualCoordinateAscent`）能够有效地使用它：
 
 ```CSharp
 //Create ML Context with seed for repeteable/deterministic results
 MLContext mlContext = new MLContext(seed: 0);
 
 // STEP 1: Common data loading configuration
-TextLoader textLoader = mlContext.Data.TextReader(new TextLoader.Arguments()
-                                {
-                                    Separator = ",",
-                                    HasHeader = true,
-                                    Column = new[]
-                                                {
-                                                    new TextLoader.Column("VendorId", DataKind.Text, 0),
-                                                    new TextLoader.Column("RateCode", DataKind.Text, 1),
-                                                    new TextLoader.Column("PassengerCount", DataKind.R4, 2),
-                                                    new TextLoader.Column("TripTime", DataKind.R4, 3),
-                                                    new TextLoader.Column("TripDistance", DataKind.R4, 4),
-                                                    new TextLoader.Column("PaymentType", DataKind.Text, 5),
-                                                    new TextLoader.Column("FareAmount", DataKind.R4, 6)
-                                                }
-                                });
-
-IDataView baseTrainingDataView = textLoader.Read(TrainDataPath);
-IDataView testDataView = textLoader.Read(TestDataPath);
+IDataView baseTrainingDataView = mlContext.Data.LoadFromTextFile<TaxiTrip>(TrainDataPath, hasHeader: true, separatorChar: ',');
+IDataView testDataView = mlContext.Data.LoadFromTextFile<TaxiTrip>(TestDataPath, hasHeader: true, separatorChar: ',');
 
 //Sample code of removing extreme data like "outliers" for FareAmounts higher than $150 and lower than $1 which can be error-data 
-var cnt = baseTrainingDataView.GetColumn<float>(mlContext, "FareAmount").Count();
-IDataView trainingDataView = mlContext.Data.FilterByColumn(baseTrainingDataView, "FareAmount", lowerBound: 1, upperBound: 150);
-var cnt2 = trainingDataView.GetColumn<float>(mlContext, "FareAmount").Count();
+var cnt = baseTrainingDataView.GetColumn<float>(nameof(TaxiTrip.FareAmount)).Count();
+IDataView trainingDataView = mlContext.Data.FilterRowsByColumn(baseTrainingDataView, nameof(TaxiTrip.FareAmount), lowerBound: 1, upperBound: 150);
+var cnt2 = trainingDataView.GetColumn<float>(nameof(TaxiTrip.FareAmount)).Count();
 
 // STEP 2: Common data process configuration with pipeline data transformations
-var dataProcessPipeline = mlContext.Transforms.CopyColumns("FareAmount", "Label")
-                .Append(mlContext.Transforms.Categorical.OneHotEncoding("VendorId", "VendorIdEncoded"))
-                .Append(mlContext.Transforms.Categorical.OneHotEncoding("RateCode", "RateCodeEncoded"))
-                .Append(mlContext.Transforms.Categorical.OneHotEncoding("PaymentType", "PaymentTypeEncoded"))
-                .Append(mlContext.Transforms.Normalize(inputName: "PassengerCount", mode: NormalizerMode.MeanVariance))
-                .Append(mlContext.Transforms.Normalize(inputName: "TripTime", mode: NormalizerMode.MeanVariance))
-                .Append(mlContext.Transforms.Normalize(inputName: "TripDistance", mode: NormalizerMode.MeanVariance))
-                .Append(mlContext.Transforms.Concatenate("Features", "VendorIdEncoded", "RateCodeEncoded", "PaymentTypeEncoded", "PassengerCount", "TripTime", "TripDistance"));
+var dataProcessPipeline = mlContext.Transforms.CopyColumns(outputColumnName: "Label", inputColumnName: nameof(TaxiTrip.FareAmount))
+                            .Append(mlContext.Transforms.Categorical.OneHotEncoding(outputColumnName: "VendorIdEncoded", inputColumnName: nameof(TaxiTrip.VendorId)))
+                            .Append(mlContext.Transforms.Categorical.OneHotEncoding(outputColumnName: "RateCodeEncoded", inputColumnName: nameof(TaxiTrip.RateCode)))
+                            .Append(mlContext.Transforms.Categorical.OneHotEncoding(outputColumnName: "PaymentTypeEncoded",inputColumnName: nameof(TaxiTrip.PaymentType)))
+                            .Append(mlContext.Transforms.NormalizeMeanVariance(outputColumnName: nameof(TaxiTrip.PassengerCount)))
+                            .Append(mlContext.Transforms.NormalizeMeanVariance(outputColumnName: nameof(TaxiTrip.TripTime)))
+                            .Append(mlContext.Transforms.NormalizeMeanVariance(outputColumnName: nameof(TaxiTrip.TripDistance)))
+                            .Append(mlContext.Transforms.Concatenate("Features", "VendorIdEncoded", "RateCodeEncoded", "PaymentTypeEncoded", nameof(TaxiTrip.PassengerCount)
+                            , nameof(TaxiTrip.TripTime), nameof(TaxiTrip.TripDistance)));
 
-// STEP 3: Set the training algorithm, then create and config the modelBuilder - Selected Trainer (SDCA 回归 algorithm)                            
-var trainer = mlContext.Regression.Trainers.StochasticDualCoordinateAscent(labelColumn: "Label", featureColumn: "Features");
+
+// STEP 3: Set the training algorithm, then create and config the modelBuilder - Selected Trainer (SDCA Regression algorithm)                            
+var trainer = mlContext.Regression.Trainers.Sdca(labelColumnName: "Label", featureColumnName: "Features");
 var trainingPipeline = dataProcessPipeline.Append(trainer);
 ```
 
@@ -90,7 +76,7 @@ var trainedModel = trainingPipeline.Fit(trainingDataView);
 
 ```CSharp
 IDataView predictions = trainedModel.Transform(testDataView);
-var metrics = mlContext.Regression.Evaluate(predictions, label: "Label", score: "Score");
+var metrics = mlContext.Regression.Evaluate(predictions, labelColumnName: "Label", scoreColumnName: "Score");
 
 Common.ConsoleHelper.PrintRegressionMetrics(trainer.ToString(), metrics);
 
@@ -123,14 +109,14 @@ var taxiTripSample = new TaxiTrip()
 ITransformer trainedModel;
 using (var stream = new FileStream(ModelPath, FileMode.Open, FileAccess.Read, FileShare.Read))
 {
-    trainedModel = mlContext.Model.Load(stream);
+    trainedModel = mlContext.Model.Load(stream, out var modelInputSchema);
 }
 
 // Create prediction engine related to the loaded trained model
-var predFunction = trainedModel.MakePredictionFunction<TaxiTrip, TaxiTripFarePrediction>(mlContext);
+var predEngine = mlContext.Model.CreatePredictionEngine<TaxiTrip, TaxiTripFarePrediction>(trainedModel);
 
 //Score
-var resultprediction = predFunction.Predict(taxiTripSample);
+var resultprediction = predEngine.Predict(taxiTripSample);
 
 Console.WriteLine($"**********************************************************************");
 Console.WriteLine($"Predicted fare: {resultprediction.FareAmount:0.####}, actual fare: 15.5");
@@ -139,6 +125,7 @@ Console.WriteLine($"************************************************************
 ```
 
 最后，您可以用方法`PlotRegressionChart()`在图表中展现测试预测的分布情况以及回归的执行方式，如下面的屏幕截图所示： 
+
 
 ![Regression plot-chart](images/Sample-Regression-Chart.png)
 

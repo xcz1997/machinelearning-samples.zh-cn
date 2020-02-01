@@ -1,16 +1,10 @@
 ﻿using System;
-using System.IO;
-using System.IO.Compression;
 using System.Linq;
-using Microsoft.ML.Runtime.Api;
-using Microsoft.ML.Runtime.Data;
-
-using Microsoft.ML.Core.Data;
 using System.Collections.Generic;
 using Microsoft.ML.Data;
 using Microsoft.ML;
-
-using System.Reflection;
+using static Microsoft.ML.TrainCatalogBase;
+using System.Diagnostics;
 
 namespace Common
 {
@@ -31,56 +25,68 @@ namespace Common
             Console.WriteLine($"-------------------------------------------------");
         }
 
-
-        public static void PrintRegressionMetrics(string name, RegressionEvaluator.Result metrics)
+        public static void PrintRegressionMetrics(string name, RegressionMetrics metrics)
         {
             Console.WriteLine($"*************************************************");
             Console.WriteLine($"*       Metrics for {name} regression model      ");
             Console.WriteLine($"*------------------------------------------------");
-            Console.WriteLine($"*       LossFn:        {metrics.LossFn:0.##}");
+            Console.WriteLine($"*       LossFn:        {metrics.LossFunction:0.##}");
             Console.WriteLine($"*       R2 Score:      {metrics.RSquared:0.##}");
-            Console.WriteLine($"*       Absolute loss: {metrics.L1:#.##}");
-            Console.WriteLine($"*       Squared loss:  {metrics.L2:#.##}");
-            Console.WriteLine($"*       RMS loss:      {metrics.Rms:#.##}");
+            Console.WriteLine($"*       Absolute loss: {metrics.MeanAbsoluteError:#.##}");
+            Console.WriteLine($"*       Squared loss:  {metrics.MeanSquaredError:#.##}");
+            Console.WriteLine($"*       RMS loss:      {metrics.RootMeanSquaredError:#.##}");
             Console.WriteLine($"*************************************************");
         }
 
-        public static void PrintBinaryClassificationMetrics(string name, BinaryClassifierEvaluator.Result metrics)
+        public static void PrintBinaryClassificationMetrics(string name, CalibratedBinaryClassificationMetrics metrics)
         {
             Console.WriteLine($"************************************************************");
             Console.WriteLine($"*       Metrics for {name} binary classification model      ");
             Console.WriteLine($"*-----------------------------------------------------------");
             Console.WriteLine($"*       Accuracy: {metrics.Accuracy:P2}");
-            Console.WriteLine($"*       Auc:      {metrics.Auc:P2}");
+            Console.WriteLine($"*       Area Under Curve:      {metrics.AreaUnderRocCurve:P2}");
+            Console.WriteLine($"*       Area under Precision recall Curve:  {metrics.AreaUnderPrecisionRecallCurve:P2}");
             Console.WriteLine($"*       F1Score:  {metrics.F1Score:P2}");
+            Console.WriteLine($"*       LogLoss:  {metrics.LogLoss:#.##}");
+            Console.WriteLine($"*       LogLossReduction:  {metrics.LogLossReduction:#.##}");
+            Console.WriteLine($"*       PositivePrecision:  {metrics.PositivePrecision:#.##}");
+            Console.WriteLine($"*       PositiveRecall:  {metrics.PositiveRecall:#.##}");
+            Console.WriteLine($"*       NegativePrecision:  {metrics.NegativePrecision:#.##}");
+            Console.WriteLine($"*       NegativeRecall:  {metrics.NegativeRecall:P2}");
             Console.WriteLine($"************************************************************");
         }
 
-        public static void PrintMultiClassClassificationMetrics(string name, MultiClassClassifierEvaluator.Result metrics)
+        public static void PrintAnomalyDetectionMetrics(string name, AnomalyDetectionMetrics metrics)
+        {
+            Console.WriteLine($"************************************************************");
+            Console.WriteLine($"*       Metrics for {name} anomaly detection model      ");
+            Console.WriteLine($"*-----------------------------------------------------------");
+            Console.WriteLine($"*       Area Under ROC Curve:                       {metrics.AreaUnderRocCurve:P2}");
+            Console.WriteLine($"*       Detection rate at false positive count: {metrics.DetectionRateAtFalsePositiveCount}");
+            Console.WriteLine($"************************************************************");
+        }
+
+        public static void PrintMultiClassClassificationMetrics(string name, MulticlassClassificationMetrics metrics)
         {
             Console.WriteLine($"************************************************************");
             Console.WriteLine($"*    Metrics for {name} multi-class classification model   ");
             Console.WriteLine($"*-----------------------------------------------------------");
-            Console.WriteLine($"    AccuracyMacro = {metrics.AccuracyMacro:0.####}, a value between 0 and 1, the closer to 1, the better");
-            Console.WriteLine($"    AccuracyMicro = {metrics.AccuracyMicro:0.####}, a value between 0 and 1, the closer to 1, the better");
+            Console.WriteLine($"    AccuracyMacro = {metrics.MacroAccuracy:0.####}, a value between 0 and 1, the closer to 1, the better");
+            Console.WriteLine($"    AccuracyMicro = {metrics.MicroAccuracy:0.####}, a value between 0 and 1, the closer to 1, the better");
             Console.WriteLine($"    LogLoss = {metrics.LogLoss:0.####}, the closer to 0, the better");
             Console.WriteLine($"    LogLoss for class 1 = {metrics.PerClassLogLoss[0]:0.####}, the closer to 0, the better");
             Console.WriteLine($"    LogLoss for class 2 = {metrics.PerClassLogLoss[1]:0.####}, the closer to 0, the better");
             Console.WriteLine($"    LogLoss for class 3 = {metrics.PerClassLogLoss[2]:0.####}, the closer to 0, the better");
             Console.WriteLine($"************************************************************");
         }
-
-        public static void PrintRegressionFoldsAverageMetrics(string algorithmName,
-                                                          (RegressionEvaluator.Result metrics,
-                                                           ITransformer model,
-                                                           IDataView scoredTestData)[] crossValidationResults
-                                                         )
+       
+        public static void PrintRegressionFoldsAverageMetrics(string algorithmName, IReadOnlyList<CrossValidationResult<RegressionMetrics>> crossValidationResults)
         {
-            var L1 = crossValidationResults.Select(r => r.metrics.L1);
-            var L2 = crossValidationResults.Select(r => r.metrics.L2);
-            var RMS = crossValidationResults.Select(r => r.metrics.L1);
-            var lossFunction = crossValidationResults.Select(r => r.metrics.LossFn);
-            var R2 = crossValidationResults.Select(r => r.metrics.RSquared);
+            var L1 = crossValidationResults.Select(r => r.Metrics.MeanAbsoluteError);
+            var L2 = crossValidationResults.Select(r => r.Metrics.MeanSquaredError);
+            var RMS = crossValidationResults.Select(r => r.Metrics.RootMeanSquaredError);
+            var lossFunction = crossValidationResults.Select(r => r.Metrics.LossFunction);
+            var R2 = crossValidationResults.Select(r => r.Metrics.RSquared);
 
             Console.WriteLine($"*************************************************************************************************************");
             Console.WriteLine($"*       Metrics for {algorithmName} Regression model      ");
@@ -95,19 +101,17 @@ namespace Common
 
         public static void PrintMulticlassClassificationFoldsAverageMetrics(
                                          string algorithmName,
-                                         (MultiClassClassifierEvaluator.Result metrics,
-                                          ITransformer model,
-                                          IDataView scoredTestData)[] crossValResults
+                                       IReadOnlyList<CrossValidationResult<MulticlassClassificationMetrics>> crossValResults
                                                                            )
         {
-            var metricsInMultipleFolds = crossValResults.Select(r => r.metrics);
+            var metricsInMultipleFolds = crossValResults.Select(r => r.Metrics);
 
-            var microAccuracyValues  = metricsInMultipleFolds.Select(m => m.AccuracyMicro);
+            var microAccuracyValues = metricsInMultipleFolds.Select(m => m.MicroAccuracy);
             var microAccuracyAverage = microAccuracyValues.Average();
             var microAccuraciesStdDeviation = CalculateStandardDeviation(microAccuracyValues);
             var microAccuraciesConfidenceInterval95 = CalculateConfidenceInterval95(microAccuracyValues);
 
-            var macroAccuracyValues = metricsInMultipleFolds.Select(m => m.AccuracyMacro);
+            var macroAccuracyValues = metricsInMultipleFolds.Select(m => m.MacroAccuracy);
             var macroAccuracyAverage = macroAccuracyValues.Average();
             var macroAccuraciesStdDeviation = CalculateStandardDeviation(macroAccuracyValues);
             var macroAccuraciesConfidenceInterval95 = CalculateConfidenceInterval95(macroAccuracyValues);
@@ -147,53 +151,66 @@ namespace Common
             return confidenceInterval95;
         }
 
-        public static void PrintClusteringMetrics(string name, ClusteringEvaluator.Result metrics)
+        public static void PrintClusteringMetrics(string name, ClusteringMetrics metrics)
         {
             Console.WriteLine($"*************************************************");
             Console.WriteLine($"*       Metrics for {name} clustering model      ");
             Console.WriteLine($"*------------------------------------------------");
-            Console.WriteLine($"*       AvgMinScore: {metrics.AvgMinScore}");
-            Console.WriteLine($"*       DBI is: {metrics.Dbi}");
+            Console.WriteLine($"*       Average Distance: {metrics.AverageDistance}");
+            Console.WriteLine($"*       Davies Bouldin Index is: {metrics.DaviesBouldinIndex}");
             Console.WriteLine($"*************************************************");
         }
 
-        public static List<TObservation> PeekDataViewInConsole<TObservation>(MLContext mlContext, IDataView dataView, IEstimator<ITransformer> pipeline, int numberOfRows = 4)
-            where TObservation : class, new()
+        public static void ShowDataViewInConsole(MLContext mlContext, IDataView dataView, int numberOfRows = 4)
         {
-            string msg = string.Format("Peek data in DataView: Showing {0} rows with the columns specified by TObservation class", numberOfRows.ToString());
+            string msg = string.Format("Show data in DataView: Showing {0} rows with the columns", numberOfRows.ToString());
+            ConsoleWriteHeader(msg);
+
+            var preViewTransformedData = dataView.Preview(maxRows: numberOfRows);
+
+            foreach (var row in preViewTransformedData.RowView)
+            {
+                var ColumnCollection = row.Values;
+                string lineToPrint = "Row--> ";
+                foreach (KeyValuePair<string, object> column in ColumnCollection)
+                {
+                    lineToPrint += $"| {column.Key}:{column.Value}";
+                }
+                Console.WriteLine(lineToPrint + "\n");
+            }
+        }
+
+        [Conditional("DEBUG")]
+        // This method using 'DebuggerExtensions.Preview()' should only be used when debugging/developing, not for release/production trainings
+        public static void PeekDataViewInConsole(MLContext mlContext, IDataView dataView, IEstimator<ITransformer> pipeline, int numberOfRows = 4)
+        {
+            string msg = string.Format("Peek data in DataView: Showing {0} rows with the columns", numberOfRows.ToString());
             ConsoleWriteHeader(msg);
 
             //https://github.com/dotnet/machinelearning/blob/master/docs/code/MlNetCookBook.md#how-do-i-look-at-the-intermediate-data
             var transformer = pipeline.Fit(dataView);
             var transformedData = transformer.Transform(dataView);
 
-            // 'transformedData' is a 'promise' of data, lazy-loading. Let's actually read it.
-            // Convert to an enumerable of user-defined type.
-            var someRows = transformedData.AsEnumerable<TObservation>(mlContext, reuseRowObject: false)
-                                           // Take the specified number of rows
-                                           .Take(numberOfRows)
-                                           // Convert to List
-                                           .ToList();
+            // 'transformedData' is a 'promise' of data, lazy-loading. call Preview  
+            //and iterate through the returned collection from preview.
 
-            someRows.ForEach(row =>
-                                {
-                                    string lineToPrint = "Row--> ";
+            var preViewTransformedData = transformedData.Preview(maxRows: numberOfRows);
 
-                                    var fieldsInRow = row.GetType().GetFields(BindingFlags.Instance |
-                                                                              BindingFlags.Static |
-                                                                              BindingFlags.NonPublic |
-                                                                              BindingFlags.Public);
-                                    foreach (FieldInfo field in fieldsInRow)
-                                    {
-                                        lineToPrint += $"| {field.Name}: {field.GetValue(row)}";
-                                    }
-                                    Console.WriteLine(lineToPrint);
-                                });
-
-            return someRows;
+            foreach (var row in preViewTransformedData.RowView)
+            {
+                var ColumnCollection = row.Values;
+                string lineToPrint = "Row--> ";
+                foreach (KeyValuePair<string, object> column in ColumnCollection)
+                {
+                    lineToPrint += $"| {column.Key}:{column.Value}";
+                }
+                Console.WriteLine(lineToPrint + "\n");
+            }
         }
 
-        public static List<float[]> PeekVectorColumnDataInConsole(MLContext mlContext, string columnName, IDataView dataView, IEstimator<ITransformer> pipeline, int numberOfRows = 4)
+        [Conditional("DEBUG")]
+        // This method using 'DebuggerExtensions.Preview()' should only be used when debugging/developing, not for release/production trainings
+        public static void PeekVectorColumnDataInConsole(MLContext mlContext, string columnName, IDataView dataView, IEstimator<ITransformer> pipeline, int numberOfRows = 4)
         {
             string msg = string.Format("Peek data in DataView: : Show {0} rows with just the '{1}' column", numberOfRows, columnName );
             ConsoleWriteHeader(msg);
@@ -202,20 +219,26 @@ namespace Common
             var transformedData = transformer.Transform(dataView);
 
             // Extract the 'Features' column.
-            var someColumnData = transformedData.GetColumn<float[]>(mlContext, columnName)
+            var someColumnData = transformedData.GetColumn<float[]>(columnName)
                                                         .Take(numberOfRows).ToList();
 
             // print to console the peeked rows
+
+            int currentRow = 0;
             someColumnData.ForEach(row => {
+                                            currentRow++;
                                             String concatColumn = String.Empty;
                                             foreach (float f in row)
                                             {
                                                 concatColumn += f.ToString();                                              
                                             }
-                                            Console.WriteLine(concatColumn);
-                                          });
 
-            return someColumnData;
+                                            Console.WriteLine();
+                                            string rowMsg = string.Format("**** Row {0} with '{1}' field value ****", currentRow, columnName);
+                                            Console.WriteLine(rowMsg);
+                                            Console.WriteLine(concatColumn);
+                                            Console.WriteLine();
+                                          });
         }
 
         public static void ConsoleWriteHeader(params string[] lines)
@@ -284,6 +307,5 @@ namespace Common
                 Console.WriteLine(line);
             }
         }
-
     }
 }

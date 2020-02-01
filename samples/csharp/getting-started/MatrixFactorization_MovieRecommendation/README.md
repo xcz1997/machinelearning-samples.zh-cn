@@ -2,7 +2,7 @@
 
 | ML.NET 版本 | API 类型          | 状态                        | 应用程序类型    | 数据类型 | 场景            | 机器学习任务                   | 算法                  |
 |----------------|-------------------|-------------------------------|-------------|-----------|---------------------|---------------------------|-----------------------------|
-| v0.7   | 动态 API | 最新版本 | 控制台应用程序 | .csv 文件 | 推荐 | 矩阵分解 | MatrixFactorizationTrainer|
+| v1.3.1   | 动态 API | 最新版本 | 控制台应用程序| .csv 文件 | 推荐 | 矩阵分解 | MatrixFactorizationTrainer|
 
 在这个示例中，您可以看到如何使用ML.NET来构建电影推荐引擎。
 
@@ -21,7 +21,7 @@
 | 您希望在您的推荐引擎中使用用户Id、产品Id和评分之外的更多属性（特征），例如产品描述，产品价格等。 | 场感知分解机  | [基于分解机的电影推荐器](https://github.com/dotnet/machinelearning-samples/tree/master/samples/csharp/end-to-end-apps/Recommendation-MovieRecommender/MovieRecommender_Model) | 
 
 
-## 数据集
+## DataSet
 原始数据来自MovieLens数据集：
 http://files.grouplens.org/datasets/movielens/ml-latest-small.zip
 
@@ -33,7 +33,7 @@ http://files.grouplens.org/datasets/movielens/ml-latest-small.zip
 
 要解决此问题，您需要在现有训练数据上建立和训练ML模型，评估其有多好（分析获得的指标），最后您可以使用/测试模型来预测给定输入数据变量的需求。
 
-![建立 -> 训练 -> 评估 -> 使用](../shared_content/modelpipeline.png)
+![Build -> Train -> Evaluate -> Consume](../shared_content/modelpipeline.png)
 
 ### 1. 建立模型
 
@@ -48,25 +48,29 @@ http://files.grouplens.org/datasets/movielens/ml-latest-small.zip
 下面是用于建立模型的代码：
 ```CSharp
  
- var mlcontext = new MLContext();
+ //STEP 1: Create MLContext to be shared across the model creation workflow objects 
+  MLContext mlcontext = new MLContext();
 
- var reader = mlcontext.Data.TextReader(new TextLoader.Arguments()
-            {
-                Separator = ",",
-                HasHeader = true,
-                Column = new[]
-                {
-                    new TextLoader.Column("userId", DataKind.R4, 0),
-                    new TextLoader.Column("movieId", DataKind.R4, 1),
-                    new TextLoader.Column("Label", DataKind.R4, 2)
-                }
-            });
+ //STEP 2: Read the training data which will be used to train the movie recommendation model    
+ //The schema for training data is defined by type 'TInput' in LoadFromTextFile<TInput>() method.
+ IDataView trainingDataView = mlcontext.Data.LoadFromTextFile<MovieRating>(TrainingDataLocation, hasHeader: true, ar:',');
 
- IDataView trainingDataView = reader.Read(new MultiFileSource(TrainingDataLocation));
+//STEP 3: Transform your data by encoding the two features userId and movieID. These encoded features will be provided as 
+//        to our MatrixFactorizationTrainer.
+ var dataProcessingPipeline = mlcontext.Transforms.Conversion.MapValueToKey(outputColumnName: userIdEncoded, inputColumnName: eRating.userId))
+                .Append(mlcontext.Transforms.Conversion.MapValueToKey(outputColumnName: movieIdEncoded, inputColumnName: nameofg.movieId)));
+ 
+ //Specify the options for MatrixFactorization trainer
+ MatrixFactorizationTrainer.Options options = new MatrixFactorizationTrainer.Options();
+ options.MatrixColumnIndexColumnName = userIdEncoded;
+ options.MatrixRowIndexColumnName = movieIdEncoded;
+ options.LabelColumnName = "Label";
+ options.NumberOfIterations = 20;
+ options.ApproximationRank = 100;
 
- var pipeline = mlcontext.Transforms.Categorical.MapValueToKey("userId", "userIdEncoded")
-                                   .Append(mlcontext.Transforms.Categorical.MapValueToKey("movieId", "movieIdEncoded")
-                                   .Append(new MatrixFactorizationTrainer(mlcontext, "Label","userIdEncoded", "movieIdEncoded")));
+//STEP 4: Create the training pipeline 
+ var trainingPipeLine = dataProcessingPipeline.Append(mlcontext.Recommendation().Trainers.MatrixFactorization(options));
+
 ```
 
 
@@ -76,7 +80,7 @@ http://files.grouplens.org/datasets/movielens/ml-latest-small.zip
 要执行训练，您需要调用`Fit()`方法访问在DataView对象中提供的训练数据集（`recommendation-ratings-train.csv`文件）。
 
 ```CSharp    
-var model = pipeline.Fit(trainingDataView);
+ITransformer model = trainingPipeLine.Fit(trainingDataView);
 ```
 请注意，ML.NET使用延迟加载方法处理数据，所以实际上只有调用.Fit()方法时才真正在内存中加载数据。
 
@@ -87,15 +91,15 @@ var model = pipeline.Fit(trainingDataView);
 
 ```CSharp 
 Console.WriteLine("=============== Evaluating the model ===============");
-IDataView testDataView = reader.Read(new MultiFileSource(TestDataLocation));
+IDataView testDataView = mlcontext.Data.LoadFromTextFile<MovieRating>(TestDataLocation, hasHeader: true); 
 var prediction = model.Transform(testDataView);
-var metrics = mlcontext.Regression.Evaluate(prediction, label: "Label", score: "Score");
+var metrics = mlcontext.Regression.Evaluate(prediction, labelColumnName: "Label", scoreColumnName: "Score");
 ```
 
 ### 4. 使用模型
 训练模型后，您可以使用`Predict()`API来预测特定电影/用户组合的评分。
 ```CSharp    
-var predictionengine = model.MakePredictionFunction<MovieRating, MovieRatingPrediction>(mlcontext);
+var predictionengine = mlcontext.Model.CreatePredictionEngine<MovieRating, MovieRatingPrediction>(model);
 var movieratingprediction = predictionengine.Predict(
                 new MovieRating()
                 {
@@ -108,4 +112,8 @@ var movieratingprediction = predictionengine.Predict(
                    movieService.Get(predictionmovieId).movieTitle + " is:" + Math.Round(movieratingprediction.Score,1));
        
 ```
-请注意，这是用矩阵分解进行电影推荐的一种方法。还有其他的推荐方案，我们也将为其建立示例。
+方案，我们也将为其建立示例。
+
+#### 矩阵分解的得分
+
+矩阵分解产生的分数表示为正的可能性。得分值越大，成为阳性案例的概率越高。然而，分数没有任何概率信息。当你做一个预测时，你必须计算出多个商品的得分，并挑选得分最高的商品。
